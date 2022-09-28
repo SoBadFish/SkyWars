@@ -118,6 +118,11 @@ public class GameRoomConfig {
      * */
     public ArrayList<String> gameStartMessage = new ArrayList<>();
 
+    /**
+     * 箱子物品
+     * */
+    public Map<String,ItemConfig> items = new LinkedHashMap<>();
+
 
 
     private GameRoomConfig(String name,
