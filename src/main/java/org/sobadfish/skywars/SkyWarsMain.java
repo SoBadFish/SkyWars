@@ -20,11 +20,11 @@ public class SkyWarsMain extends PluginBase {
     public void onEnable() {
 
 
-        this.getLogger().info(TextFormat.colorize('&',"&e  ___                ___                "));
-        this.getLogger().info(TextFormat.colorize('&',"&e / __|__ _ _ __  ___|   \\ ___ _ __  ___ "));
-        this.getLogger().info(TextFormat.colorize('&',"&e| (_ / _` | '  \\/ -_) |) / -_) '  \\/ _ \\"));
-        this.getLogger().info(TextFormat.colorize('&',"&e \\___\\__,_|_|_|_\\___|___/\\___|_|_|_\\___/"));
-        this.getLogger().info(TextFormat.colorize('&',"&e"));
+        this.getLogger().info(TextFormat.colorize('&',"&e ___ _      __      __           "));
+        this.getLogger().info(TextFormat.colorize('&',"&e/ __| |___  \\ \\    / /_ _ _ _ ___"));
+        this.getLogger().info(TextFormat.colorize('&',"&e\\__ \\ / / || \\ \\/\\/ / _` | '_(_-<"));
+        this.getLogger().info(TextFormat.colorize('&',"&e|___/_\\_\\\\_, |\\_/\\_/\\__,_|_| /__/"));
+        this.getLogger().info(TextFormat.colorize('&',"&e         |__/                    "));
         this.getLogger().info(TextFormat.colorize('&',"&e正在加载"+TotalManager.GAME_NAME+" 插件 本版本为&av"+this.getDescription().getVersion()));
         this.getLogger().info(TextFormat.colorize('&',"&a插件加载完成，祝您使用愉快"));
 
