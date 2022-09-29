@@ -784,6 +784,7 @@ public class PlayerInfo {
                 ((Player) getPlayer()).setGamemode(3);
             }
             playerType = PlayerType.WATCH;
+
             if(gameRoom.getRoomConfig().teamConfigs.size() == 1) {
                 teamInfo.getDefeatPlayers().add(this);
             }
@@ -799,8 +800,13 @@ public class PlayerInfo {
                 if(damageByInfo != null){
                     gameRoom.sendMessage(this + " &e被 &r" + damageByInfo + " 推入虚空。");
                     addKill(damageByInfo);
+                }else {
+                    gameRoom.sendMessage(this + "&e掉入虚空");
                 }
-                gameRoom.sendMessage(this + "&e掉入虚空");
+                player.teleport(getGameRoom().worldInfo.getConfig().getGameWorld().getSafeSpawn());
+                Position position = teamInfo.getSpawnLocation();
+                player.teleport(new Position(player.x, position.y + 64, player.z, getLevel()));
+
 
             } else if (event instanceof EntityDamageByEntityEvent) {
                 Entity entity = ((EntityDamageByEntityEvent) event).getDamager();
