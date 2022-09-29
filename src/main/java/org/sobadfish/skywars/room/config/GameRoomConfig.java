@@ -138,7 +138,11 @@ public class GameRoomConfig {
     /**
      * 刷新箱子物品概率
      * */
-    private int round = 15;
+    public int round = 15;
+    /**
+     * 刷新箱子的时间
+     * */
+    public int resetTime = 0;
 
 
 
@@ -244,7 +248,6 @@ public class GameRoomConfig {
                 }
                 GameRoomConfig roomConfig = new GameRoomConfig(name,worldInfoConfig,time,waitTime,maxWaitTime,minPlayerSize,maxPlayerSize,teamInfoConfigs);
                 roomConfig.hasWatch = room.getBoolean("hasWatch",true);
-                roomConfig.reSpawnTime = room.getInt("reSpawnTime",0);
                 roomConfig.banCommand = new ArrayList<>(room.getStringList("ban-command"));
                 roomConfig.isAutomaticNextRound = room.getBoolean("AutomaticNextRound",true);
                 roomConfig.quitRoomCommand = new ArrayList<>(room.getStringList("QuitRoom"));
@@ -254,6 +257,7 @@ public class GameRoomConfig {
                 roomConfig.canBreak = new ArrayList<>(room.getStringList("can-break"));
                 roomConfig.banBreak = new ArrayList<>(room.getStringList("ban-break"));
 
+                roomConfig.resetTime = room.getInt("resetTime",120);
                 //TODO 如果小游戏需要使用箱子内随机刷新物品 就解开这个配置
                 //////////////////////////////////////////////////////////
                 if(!new File(file+"/items.yml").exists()){

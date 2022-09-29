@@ -148,6 +148,10 @@ public class FunctionManager {
                 String block = map.get("block").toString().split(":")[0];
 
                 List<Item> items = new ArrayList<>();
+                int time = -1;
+                if(map.containsKey("time")){
+                    time = Integer.parseInt(map.get("time").toString());
+                }
                 String name = "未命名";
                 if(map.containsKey("items")) {
                     List<?> list = (List<?>) map.get("items");
@@ -160,7 +164,7 @@ public class FunctionManager {
                     name = map.get("name").toString();
                 }
                 TotalManager.sendMessageToConsole("&e物品读取完成 &7("+block+")&r》"+items.size()+"《");
-                configLinkedHashMap.put(block,new ItemConfig(block,name,items));
+                configLinkedHashMap.put(block,new ItemConfig(block,name,time,items));
             }
         }
         TotalManager.sendMessageToConsole("&a物品加载完成: &r》"+configLinkedHashMap.size()+"《");

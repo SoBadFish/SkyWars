@@ -1,9 +1,4 @@
 # 物品-后面为占比
-blocks:
-  - block: "15:0"
-    items:
-      - ""
-
 chests:
   - block: "54:0"
     items:

@@ -3,6 +3,7 @@ package org.sobadfish.skywars.player;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockStone;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -11,6 +12,7 @@ import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
+import cn.nukkit.item.ItemPickaxeIron;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
@@ -64,6 +66,8 @@ public class PlayerInfo {
 
     public int updateTime = 0;
 
+    public int loadWaitTime = 0;
+
     public int assists = 0;
 
     private PlayerInfo damageByInfo = null;
@@ -71,6 +75,8 @@ public class PlayerInfo {
     public PlayerInventory inventory;
 
     public PlayerEnderChestInventory eInventory;
+
+    public ArrayList<Position> glass = new ArrayList<>();
 
     //助攻
     public LinkedHashMap<PlayerInfo,Long> assistsPlayers = new LinkedHashMap<>();
@@ -413,11 +419,13 @@ public class PlayerInfo {
 
         //内部定时器
         Position pos = teamInfo.getSpawnLocation();
-        FunctionManager.sendBlock(FunctionManager.spawnGlass(pos), Block.GLASS,
+        List<Position> sg = FunctionManager.spawnGlass(pos);
+        FunctionManager.sendBlock(sg, Block.GLASS,
                 new ArrayList<>(gameRoom.roomConfig.getWorldInfo()
                         .getGameWorld().getPlayers().values()));
 
-        gameRoom.worldInfo.spawnBlock.addAll(FunctionManager.spawnGlass(pos));
+        glass.addAll(sg);
+        loadWaitTime = 10;
 
         boolean teleport;
         try {
@@ -425,6 +433,7 @@ public class PlayerInfo {
         }catch (Exception e){
             teleport = false;
         }
+        player.setImmobile(true);
         if(!teleport){
             throw new NullPointerException("无法将玩家传送到队伍出生点");
         }
@@ -598,7 +607,10 @@ public class PlayerInfo {
 
         }else{
 
-            lore.add("游戏结束: &a"+formatTime(getGameRoom().loadTime));
+            lore.add("游戏结束: &a"+formatTime1(getGameRoom().loadTime));
+            lore.add("    ");
+            lore.add("箱子刷新: &a"+formatTime1(gameRoom.roomConfig.resetTime - gameRoom.worldInfo.resetTime));
+            lore.add("     ");
             if(gameRoom.roomConfig.teamConfigs.size() > 0){
                 for(TeamInfo teamInfo: gameRoom.getTeamInfos()){
                     String me = "";
@@ -609,11 +621,11 @@ public class PlayerInfo {
                 }
             }else{
                 TeamInfo teamInfo = gameRoom.getTeamInfos().get(0);
-                lore.add("   ");
+                lore.add("    ");
                 lore.add(" 存活人数: &a "+teamInfo.getLivePlayer().size() +" &7/&a "+teamInfo.getTeamPlayers().size());
             }
 
-            lore.add("      ");
+            lore.add("       ");
             lore.add("&b击杀数: &a"+killCount);
             lore.add("&e助攻数: &a"+assists);
 
@@ -629,16 +641,33 @@ public class PlayerInfo {
         }
         return lore;
     }
-    private int loadTime = 0;
+
 
     private boolean isSendkey = false;
+
 
     /**
      * 定时任务
      * */
     public void onUpdate(){
         //TODO 玩家进入房间后每秒就会调用这个方法
+        if(loadWaitTime > 0){
+            loadWaitTime--;
+        }else{
+            if(player.isImmobile()){
+                player.setImmobile(false);
+                FunctionManager.unSendBlock(glass,
+                        new ArrayList<>(gameRoom.roomConfig.getWorldInfo()
+                        .getGameWorld().getPlayers().values()));
+                sendTitle("&a开始!");
+                player.getInventory().addItem(new ItemPickaxeIron());
+                BlockStone stone = new BlockStone();
+                Item i = stone.toItem();
+                i.setCount(10);
+                player.getInventory().addItem(i);
+            }
 
+        }
         //助攻间隔
         LinkedHashMap<PlayerInfo,Long> ass = new LinkedHashMap<>(assistsPlayers);
         for(Map.Entry<PlayerInfo,Long> entry: ass.entrySet()){
