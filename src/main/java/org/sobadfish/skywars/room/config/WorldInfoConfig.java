@@ -18,11 +18,11 @@ import java.io.File;
  */
 public class WorldInfoConfig {
 
+    private String level;
     /*
      * 游戏地图
      * */
-    private String level;
-
+//    private Level gameWorld;
 
     /**
      * 等待大厅坐标
@@ -49,6 +49,8 @@ public class WorldInfoConfig {
         if(Server.getInstance().isLevelLoaded(level)){
             l = Server.getInstance().getLevelByName(level);
         }
+//        Level l =  Server.getInstance().isLevelLoaded(level) && Server.getInstance().getLevelByName(level) != null
+//                && Server.getInstance().getLevelByName(level).getSafeSpawn() != null?Server.getInstance().getLevelByName(level):null;
         return l;
     }
 

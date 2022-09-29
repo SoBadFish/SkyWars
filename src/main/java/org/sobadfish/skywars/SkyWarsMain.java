@@ -42,4 +42,15 @@ public class SkyWarsMain extends PluginBase {
        TotalManager.onDisable();
     }
 
+
+//    public enum UiType{
+//        /**
+//         * auto: 自动
+//         *
+//         * packet: GUI界面
+//         *
+//         * ui: 箱子界面
+//         * */
+//        AUTO,PACKET,UI
+//    }
 }

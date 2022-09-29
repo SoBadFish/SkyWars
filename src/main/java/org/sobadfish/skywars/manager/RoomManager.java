@@ -13,6 +13,7 @@ import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -884,7 +885,7 @@ public class RoomManager implements Listener {
     public void onTeamDefeat(TeamDefeatEvent event){
 
         final GameRoom room = event.getRoom();
-        for (PlayerInfo info:event.getTeamInfo().getInRoomPlayer()) {
+        for (PlayerInfo info:event.getTeamInfo().getDefeatPlayers()) {
 
             room.getRoomConfig().defeatCommand.forEach(cmd->Server.getInstance().dispatchCommand(new ConsoleCommandSender(),cmd.replace("@p",info.getName())));
             if(event.getRoom().getRoomConfig().isAutomaticNextRound){
@@ -921,13 +922,12 @@ public class RoomManager implements Listener {
         event.getRoom().sendTipMessage("&a"+line);
         event.getRoom().sendTipMessage(FunctionManager.getCentontString("&b游戏结束",line.length()));
         event.getRoom().sendTipMessage("");
-        for(PlayerInfo playerInfo: event.getTeamInfo().getInRoomPlayer()){
+        for(PlayerInfo playerInfo: event.getTeamInfo().getVictoryPlayers()){
             event.getRoom().sendTipMessage(FunctionManager.getCentontString("&7   "+playerInfo.getPlayer().getName()+" 击杀："+(playerInfo.getKillCount())+" 助攻: "+playerInfo.getAssists(),line.length()));
+            event.getRoom().getRoomConfig().victoryCommand.forEach(cmd->Server.getInstance().dispatchCommand(new ConsoleCommandSender(),cmd.replace("@p",playerInfo.getName())));
         }
         event.getRoom().sendTipMessage("&a"+line);
-        for (PlayerInfo info:event.getTeamInfo().getInRoomPlayer()) {
-            event.getRoom().getRoomConfig().victoryCommand.forEach(cmd->Server.getInstance().dispatchCommand(new ConsoleCommandSender(),cmd.replace("@p",info.getName())));
-        }
+
 
         event.getRoom().sendMessage("&a恭喜 "+event.getTeamInfo().getTeamConfig().getNameColor()+event.getTeamInfo().getTeamConfig().getName()+" &a 获得了胜利!");
 
@@ -969,12 +969,57 @@ public class RoomManager implements Listener {
                     info.sendMessage("&c观察状态下不能放置方块");
                     event.setCancelled();
 
+                }else{
+                    room.worldInfo.onChangeBlock(block,true);
                 }
 
             }
         }
 
     }
+    /**
+     * 限制玩家放置方块事件
+
+     * */
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+        Level level = event.getBlock().level;
+
+        Item item = event.getItem();
+        if(item.hasCompoundTag() && (item.getNamedTag().contains(TotalManager.GAME_NAME)
+        )){
+            event.setCancelled();
+            return;
+        }
+        Block block = event.getBlock();
+        GameRoom room = getGameRoomByLevel(level);
+        if(room != null){
+            PlayerInfo info = room.getPlayerInfo(event.getPlayer());
+            if(info != null) {
+                if(info.isWatch()) {
+                    info.sendMessage("&c无法破坏地图方块");
+                    event.setCancelled();
+                }
+                if(room.roomConfig.banBreak.size() > 0){
+                    if(room.roomConfig.banBreak.contains(block.getId()+"")){
+                        if(!room.roomConfig.canBreak.contains(block.getId()+"")){
+                            event.setCancelled();
+                        }
+                    }
+                    room.worldInfo.onChangeBlock(block, false);
+
+                }else {
+                    if (room.worldInfo.getPlaceBlock().contains(block) || room.roomConfig.canBreak.contains(block.getId()+"")) {
+                        room.worldInfo.onChangeBlock(block, false);
+                    } else {
+                        info.sendMessage("&c无法破坏地图方块");
+                        event.setCancelled();
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * 修改玩家聊天信息事件

@@ -24,6 +24,10 @@ public class TeamInfoConfig {
      * */
     private List<String> spawnPosition;
 
+    /**
+     * 队伍内PVP
+     * */
+    private boolean canPvp;
 
 
 
