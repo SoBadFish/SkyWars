@@ -9,6 +9,7 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
+import org.sobadfish.skywars.manager.TotalManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.concurrent.Executors;
  * 本类引用 SupermeMortal 的 FakeInventories 插件
  * @author SupermeMortal*/
 public abstract class AbstractFakeInventory extends ContainerInventory {
-    public static boolean IS_PM1E = false;
+
     private static final BlockVector3 ZERO = new BlockVector3(0, 0, 0);
 
     private static final Map<Player, AbstractFakeInventory> OPEN = new ConcurrentHashMap<>();
@@ -79,7 +80,7 @@ public abstract class AbstractFakeInventory extends ContainerInventory {
             service.execute(() -> {
                 Vector3 blockPosition = blocks.get(index).asVector3();
                 UpdateBlockPacket updateBlock = new UpdateBlockPacket();
-                if(IS_PM1E){
+                if(TotalManager.IS_PM1E){
                     updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(who.protocol,who.getLevel().getBlock(blockPosition).getFullId());
                 }else{
                     updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(who.getLevel().getBlock(blockPosition).getFullId());

@@ -1,10 +1,16 @@
 package org.sobadfish.skywars.manager;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GlobalBlockPalette;
+import cn.nukkit.level.Position;
+import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.room.config.ItemConfig;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 这个方法封装着一些算法功能
@@ -188,6 +194,70 @@ public class FunctionManager {
         }
         return item;
 
+    }
+    private static ExecutorService service = Executors.newSingleThreadExecutor();
+
+    /**
+     * 由于放置方块在nk核心中是被锁的状态
+     * 每个地方都调用setBlock会造成极大的卡顿，于是
+     * 通过发包来解决
+     * */
+    public static void sendBlock(List<Position> positions,int blockId,List<Player> players){
+        for(Position pos: positions){
+            UpdateBlockPacket updateBlock = new UpdateBlockPacket();
+            updateBlock.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
+            updateBlock.x = (int) pos.x;
+            updateBlock.y = (int) pos.y;
+            updateBlock.z = (int) pos.z;
+            for(Player player: players) {
+                if (TotalManager.IS_PM1E) {
+                    updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(player.protocol, blockId, 0);
+                } else {
+                    updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(blockId, 0);
+                }
+                player.dataPacket(updateBlock);
+            }
+        }
+
+    }
+
+    /**
+     * 移除包
+     * */
+    public static void unSendBlock(List<Position> positions,List<Player> players){
+        for(Position pos: positions){
+            service.execute(() -> {
+                UpdateBlockPacket updateBlock = new UpdateBlockPacket();
+                updateBlock.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
+                updateBlock.x = (int) pos.x;
+                updateBlock.y = (int) pos.y;
+                updateBlock.z = (int) pos.z;
+                for (Player player : players) {
+                    if (TotalManager.IS_PM1E) {
+                        updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(player.protocol, pos.getLevelBlock().getFullId(), 0);
+                    } else {
+                        updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(pos.getLevelBlock().getFullId(), 0);
+                    }
+                    player.dataPacket(updateBlock);
+                }
+            });
+        }
+    }
+
+    public static List<Position> spawnGlass(Position position){
+        ArrayList<Position> glasses = new ArrayList<>();
+        glasses.add(position);
+        glasses.add(position.add(1,1,0));
+        glasses.add(position.add(1,2,0));
+        glasses.add(position.add(-1,1,0));
+        glasses.add(position.add(-1,2,0));
+
+        glasses.add(position.add(0,1,1));
+        glasses.add(position.add(0,2,1));
+        glasses.add(position.add(0,1,-1));
+        glasses.add(position.add(0,2,-1));
+        glasses.add(position.add(0,3,0));
+        return glasses;
     }
 
 }

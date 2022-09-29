@@ -25,6 +25,8 @@ public class WorldInfo {
 
     private WorldInfoConfig config;
 
+    public List<Position> spawnBlock = new ArrayList<>();
+
     public List<Position> clickChest = new ArrayList<>();
 
     public List<Block> placeBlock = new ArrayList<>();

@@ -2,13 +2,15 @@ package org.sobadfish.skywars.player;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
@@ -23,6 +25,7 @@ import de.theamychan.scoreboard.network.DisplaySlot;
 import de.theamychan.scoreboard.network.Scoreboard;
 import de.theamychan.scoreboard.network.ScoreboardDisplay;
 import org.sobadfish.skywars.event.PlayerGameDeathEvent;
+import org.sobadfish.skywars.manager.FunctionManager;
 import org.sobadfish.skywars.manager.TotalManager;
 import org.sobadfish.skywars.player.message.ScoreBoardMessage;
 import org.sobadfish.skywars.player.team.TeamInfo;
@@ -408,10 +411,17 @@ public class PlayerInfo {
 
         player.getInventory().clearAll();
 
+        //内部定时器
+        Position pos = teamInfo.getSpawnLocation();
+        FunctionManager.sendBlock(FunctionManager.spawnGlass(pos), Block.GLASS,
+                new ArrayList<>(gameRoom.roomConfig.getWorldInfo()
+                        .getGameWorld().getPlayers().values()));
+
+        gameRoom.worldInfo.spawnBlock.addAll(FunctionManager.spawnGlass(pos));
 
         boolean teleport;
         try {
-            teleport = player.teleport(teamInfo.getSpawnLocation());
+            teleport = player.teleport(pos);
         }catch (Exception e){
             teleport = false;
         }

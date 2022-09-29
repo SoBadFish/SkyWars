@@ -6,7 +6,6 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.manager.data.PlayerDataManager;
 import org.sobadfish.skywars.manager.data.PlayerTopManager;
-import org.sobadfish.skywars.panel.lib.AbstractFakeInventory;
 import org.sobadfish.skywars.room.config.GameRoomConfig;
 
 import java.io.File;
@@ -18,7 +17,9 @@ import java.io.File;
  */
 public class TotalManager {
 
-
+    /**
+     * 当前运行核心是否为PM1E*/
+    public static boolean IS_PM1E = false;
     /**
      * 游戏指令
      * */
@@ -251,7 +252,7 @@ public class TotalManager {
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException ignore) {
         }
 
-        AbstractFakeInventory.IS_PM1E = ver;
+        IS_PM1E = ver;
         if(ver){
             sendMessageToConsole("&e当前核心为 Nukkit PM1E");
         }else{
