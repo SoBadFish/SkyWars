@@ -6,6 +6,8 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBed;
 import cn.nukkit.block.BlockCraftingTable;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityNameable;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
@@ -27,6 +29,7 @@ import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.form.response.FormResponseSimple;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
@@ -51,6 +54,7 @@ import org.sobadfish.skywars.player.team.TeamInfo;
 import org.sobadfish.skywars.room.GameRoom;
 import org.sobadfish.skywars.room.GameRoom.GameType;
 import org.sobadfish.skywars.room.config.GameRoomConfig;
+import org.sobadfish.skywars.room.config.ItemConfig;
 import org.sobadfish.skywars.tools.Utils;
 
 import java.io.File;
@@ -610,6 +614,24 @@ public class RoomManager implements Listener {
                         choseteamItem(player, room);
 
                     }
+                    Block block = event.getBlock();
+
+                    if(room.roomConfig.items.size() > 0) {
+                        if (room.getType() == GameType.START) {
+                            ItemConfig config = room.getRandomItemConfig(block);
+                            if (config != null) {
+                                BlockEntity entityChest = block.level.getBlockEntity(block);
+                                if (entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable) {
+                                    LinkedHashMap<Integer, Item> items = room.getRandomItem(((InventoryHolder) entityChest)
+                                            .getInventory().getSize(), block);
+                                    if (items.size() > 0) {
+                                        ((InventoryHolder) entityChest).getInventory().setContents(items);
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -975,8 +997,8 @@ public class RoomManager implements Listener {
 
             }
         }
-
     }
+
     /**
      * 限制玩家放置方块事件
 
@@ -1019,7 +1041,6 @@ public class RoomManager implements Listener {
             }
         }
     }
-
 
     /**
      * 修改玩家聊天信息事件
