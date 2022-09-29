@@ -660,11 +660,7 @@ public class PlayerInfo {
                         new ArrayList<>(gameRoom.roomConfig.getWorldInfo()
                         .getGameWorld().getPlayers().values()));
                 sendTitle("&a开始!");
-                player.getInventory().addItem(new ItemPickaxeIron());
-                BlockStone stone = new BlockStone();
-                Item i = stone.toItem();
-                i.setCount(10);
-                player.getInventory().addItem(i);
+
             }
 
         }

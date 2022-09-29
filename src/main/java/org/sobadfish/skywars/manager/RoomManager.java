@@ -6,6 +6,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBed;
 import cn.nukkit.block.BlockCraftingTable;
+import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityNameable;
 import cn.nukkit.command.ConsoleCommandSender;
@@ -19,6 +20,7 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
@@ -963,8 +965,32 @@ public class RoomManager implements Listener {
         if(room != null) {
             PlayerInfo info = room.getPlayerInfo(player);
             if (info != null) {
-                event.setCancelled();
+                if(event.getRecipe().getResult().getId() == Block.CHEST) {
+                    event.setCancelled();
+                }
             }
+        }
+    }
+
+    /**
+     * 游戏地图的爆炸保护
+     * */
+
+    @EventHandler
+    public void onEntityExplodeEvent(EntityExplodeEvent event){
+        Level level = event.getPosition().getLevel();
+        GameRoom room = getGameRoomByLevel(level);
+        if(room != null) {
+            ArrayList<Block> blocks = new ArrayList<>(event.getBlockList());
+            for (Block block : event.getBlockList()) {
+                if (!room.worldInfo.getPlaceBlock().contains(block)) {
+                    blocks.remove(block);
+
+                }else{
+                    room.worldInfo.getPlaceBlock().remove(block);
+                }
+            }
+            event.setBlockList(blocks);
         }
     }
 
@@ -992,8 +1018,24 @@ public class RoomManager implements Listener {
                     event.setCancelled();
 
                 }else{
+                    if (block instanceof BlockTNT) {
+                        try {
+                            event.setCancelled();
+                            ((BlockTNT) block).prime(40);
+                            Item i2 = item.clone();
+                            i2.setCount(1);
+                            event.getPlayer().getInventory().removeItem(i2);
+                            return;
+                        } catch (Exception e) {
+                            event.setCancelled();
+                            return;
+                        }
+                    }
+
+
                     room.worldInfo.onChangeBlock(block,true);
                 }
+
 
             }
         }
