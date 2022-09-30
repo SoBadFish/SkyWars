@@ -611,7 +611,7 @@ public class PlayerInfo {
             lore.add("    ");
             lore.add("箱子刷新: &a"+formatTime1(gameRoom.roomConfig.resetTime - gameRoom.worldInfo.resetTime));
             lore.add("     ");
-            if(gameRoom.roomConfig.teamConfigs.size() > 0){
+            if(gameRoom.roomConfig.teamConfigs.size() > 1){
                 for(TeamInfo teamInfo: gameRoom.getTeamInfos()){
                     String me = "";
                     if(getTeamInfo() != null && getTeamInfo().equals(teamInfo)){
@@ -765,6 +765,8 @@ public class PlayerInfo {
         PlayerGameDeathEvent event1 = new PlayerGameDeathEvent(this,getGameRoom(),TotalManager.getPlugin());
         Server.getInstance().getPluginManager().callEvent(event1);
 
+//         mob.guardian.death
+        gameRoom.addSound(Sound.MOB_GUARDIAN_DEATH);
 
         player.removeAllEffects();
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){

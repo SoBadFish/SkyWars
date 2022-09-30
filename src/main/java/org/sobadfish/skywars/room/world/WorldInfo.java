@@ -65,13 +65,15 @@ public class WorldInfo {
     }
 
     public void onUpdate() {
-        //TODO 地图更新 每秒更新一次 可实现一些定制化功能
-        if(resetTime < room.roomConfig.resetTime){
-            resetTime++;
-        }else{
-            resetTime = 0;
-            clickChest = new ArrayList<>();
-            room.sendMessage("&e所有箱子已刷新");
+        if(room.getType() == GameRoom.GameType.START) {
+            //TODO 地图更新 每秒更新一次 可实现一些定制化功能
+            if (resetTime < room.roomConfig.resetTime) {
+                resetTime++;
+            } else {
+                resetTime = 0;
+                clickChest = new ArrayList<>();
+                room.sendMessage("&e所有箱子已刷新");
+            }
         }
 
         ///////////////////DO Something////////////
