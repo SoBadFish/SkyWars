@@ -16,14 +16,9 @@ victoryCmd: []
 defeatCmd: []
 resetTime: 120
 floatSpawnPos: []
-ban-break: []
-can-break:
-  - "15"
-  - "14"
-  - "21"
-  - "16"
-  - "56"
-  - "129"
+ban-break:
+  - "7"
+can-break: []
 round: 15
 
 roomStartMessage:

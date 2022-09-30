@@ -605,6 +605,8 @@ public class PlayerInfo {
             lore.add("    ");
             lore.add("箱子刷新: &a"+formatTime1(gameRoom.roomConfig.resetTime - gameRoom.worldInfo.resetTime));
             lore.add("     ");
+
+
             if(gameRoom.roomConfig.teamConfigs.size() > 1){
                 for(TeamInfo teamInfo: gameRoom.getTeamInfos()){
                     String me = "";
@@ -653,10 +655,6 @@ public class PlayerInfo {
                 if(player.isImmobile()){
                     player.setImmobile(false);
                     sendTitle("&a开始!");
-                    player.getInventory().addItem(new ItemSwordStone());
-                    player.getInventory().addItem(new ItemPickaxeIron());
-                    player.getInventory().addItem(new ItemAxeStone());
-
                 }
             }
         }
