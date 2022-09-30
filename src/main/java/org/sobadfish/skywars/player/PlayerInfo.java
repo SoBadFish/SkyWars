@@ -780,7 +780,7 @@ public class PlayerInfo {
             if (getPlayer() instanceof Player) {
                 ((Player) getPlayer()).setGamemode(3);
             }
-            playerType = PlayerType.WATCH;
+
 
             if(gameRoom.getRoomConfig().teamConfigs.size() == 1) {
                 teamInfo.getDefeatPlayers().add(this);
@@ -845,7 +845,7 @@ public class PlayerInfo {
                 }
             }
         }
-//        playerType = PlayerType.DEATH;
+        playerType = PlayerType.WATCH;
         damageByInfo = null;
         if(gameRoom != null){
             if(gameRoom.getRoomConfig().isDeathDrop()){

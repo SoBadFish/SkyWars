@@ -1080,7 +1080,7 @@ public class RoomManager implements Listener {
                         room.worldInfo.onChangeBlock(block, false);
                     } else {
                         if(!room.roomConfig.canBreak.contains(block.getId()+"")){
-                            info.sendMessage("&c无法破坏地图方块");
+//                            info.sendMessage("&c无法破坏地图方块");
                             event.setCancelled();
                         }else{
                             room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
