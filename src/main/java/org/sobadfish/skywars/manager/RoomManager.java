@@ -1056,23 +1056,27 @@ public class RoomManager implements Listener {
             return;
         }
         Block block = event.getBlock();
+
         GameRoom room = getGameRoomByLevel(level);
         if(room != null){
             PlayerInfo info = room.getPlayerInfo(event.getPlayer());
             if(info != null) {
+
                 if(info.isWatch()) {
                     info.sendMessage("&c无法破坏地图方块");
                     event.setCancelled();
+                    return;
                 }
                 if(room.roomConfig.banBreak.size() > 0){
                     if(room.roomConfig.banBreak.contains(block.getId()+"")){
                         if(!room.roomConfig.canBreak.contains(block.getId()+"")){
                             event.setCancelled();
-                        }else{
-                            room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
+                            return;
                         }
                     }
+                    room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
                     room.worldInfo.onChangeBlock(block, false);
+
 
                 }else {
 
@@ -1080,12 +1084,18 @@ public class RoomManager implements Listener {
                         room.worldInfo.onChangeBlock(block, false);
                     } else {
                         if(!room.roomConfig.canBreak.contains(block.getId()+"")){
-//                            info.sendMessage("&c无法破坏地图方块");
                             event.setCancelled();
+                            return;
                         }else{
                             room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
                         }
                     }
+                }
+                if(block.getId() == 15){
+                    event.setDrops(new Item[]{Item.get(265)});
+                }
+                if(block.getId() == 14){
+                    event.setDrops(new Item[]{Item.get(266)});
                 }
             }
         }

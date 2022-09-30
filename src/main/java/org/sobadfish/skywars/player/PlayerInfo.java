@@ -660,6 +660,26 @@ public class PlayerInfo {
             }
 
         }
+        if (!isWatch()) {
+            if (getPlayer().getInventory().getItemInHand().getId() == 345) {
+                //拿着指南针
+                for (PlayerInfo info : gameRoom.getLivePlayers()) {
+                    if (info.equals(this)) {
+                        continue;
+                    }
+                    double dis = info.getPlayer().distance(this.player);
+                    int d =  getPlayer().getInventory().getItemInHand().count * 10;
+                    if (dis < d) {
+                        sendActionBar(info + "在你附近\n&7》&e" + String.format("%.2f",dis) + " 米 &7《");
+                    }
+                }
+            }
+            for(Item item: getPlayer().getInventory().getContents().values()){
+                if(gameRoom.getRoomConfig().items.containsKey(item.getId()+"")){
+                    getPlayer().getInventory().remove(item);
+                }
+            }
+        }
         //助攻间隔
         LinkedHashMap<PlayerInfo,Long> ass = new LinkedHashMap<>(assistsPlayers);
         for(Map.Entry<PlayerInfo,Long> entry: ass.entrySet()){
