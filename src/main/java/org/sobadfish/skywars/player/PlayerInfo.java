@@ -301,6 +301,7 @@ public class PlayerInfo {
                     ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR,
                             "dumy", TextFormat.colorize('&', title));
 
+
                     ArrayList<String> list = message.getLore();
                     for (int line = 0; line < list.size(); line++) {
                         String s = list.get(line);
@@ -653,6 +654,7 @@ public class PlayerInfo {
         //TODO 玩家进入房间后每秒就会调用这个方法
         if(loadWaitTime > 0){
             loadWaitTime--;
+            sendActionBar("游戏开始: ▶"+FunctionManager.drawLine(loadWaitTime,10,"&e■","&7■")+" "+loadWaitTime);
         }else{
             if(player.isImmobile()){
                 player.setImmobile(false);

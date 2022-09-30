@@ -31,8 +31,25 @@ public class FunctionManager {
         int l = (int) (size * progress);
         int other = size - l;
         StringBuilder ls = new StringBuilder();
-        if(l > 0){
-            for(int i = 0;i < l;i++){
+        return mLine(l, hasDataChar, noDataChar, ls, other);
+    }
+    /**
+     * 画一条进度条
+     * ■■■■□□□□□□
+     * @param progress 进度（百分比）
+     * @param size 总长度
+     * @param hasDataChar 自定义有数据图案 ■
+     * @param noDataChar 自定义无数据图案 □
+     * */
+    public static String drawLine(int progress,int size,String hasDataChar,String noDataChar){
+        StringBuilder ls = new StringBuilder();
+        int other = size - progress;
+        return mLine(progress, hasDataChar, noDataChar, ls, other);
+    }
+
+    private static String mLine(int progress, String hasDataChar, String noDataChar, StringBuilder ls, int other) {
+        if(progress > 0){
+            for(int i = 0;i < progress;i++){
                 ls.append(hasDataChar);
             }
         }
