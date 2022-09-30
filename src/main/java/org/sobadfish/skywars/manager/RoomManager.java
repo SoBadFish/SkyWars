@@ -1096,7 +1096,7 @@ public class RoomManager implements Listener {
                 if(block.getId() == 14){
                     event.setDrops(new Item[]{Item.get(266)});
                 }
-                if(block.getId() == 74){
+                if(block.getId() == 74 || block.getId() == 73){
                     //TODO 挖到红石
                     event.setDrops(new Item[0]);
                     room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
