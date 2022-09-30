@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.TextFormat;
+import javafx.geometry.Pos;
 import org.sobadfish.skywars.event.PlayerChoseTeamEvent;
 import org.sobadfish.skywars.event.TeamDefeatEvent;
 import org.sobadfish.skywars.event.TeamVictoryEvent;
@@ -108,10 +109,12 @@ public class TeamInfo {
 
 
     public Position getSpawnLocation(){
-        if(spawnTeleportLocation > teamConfig.getSpawnPosition().size()){
+        if(spawnTeleportLocation >= teamConfig.getSpawnPosition().size()){
            spawnTeleportLocation = 0;
         }
-        return WorldInfoConfig.getPositionByString(teamConfig.getSpawnPosition().get(spawnTeleportLocation++));
+        Position pos = WorldInfoConfig.getPositionByString(teamConfig.getSpawnPosition().get(spawnTeleportLocation));
+        spawnTeleportLocation++;
+        return pos;
 
     }
 
