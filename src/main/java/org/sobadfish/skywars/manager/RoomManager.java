@@ -39,6 +39,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.event.*;
 import org.sobadfish.skywars.item.ItemIDSunName;
@@ -1074,7 +1075,7 @@ public class RoomManager implements Listener {
                             return;
                         }
                     }
-                    room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
+
                     room.worldInfo.onChangeBlock(block, false);
 
 
@@ -1086,8 +1087,6 @@ public class RoomManager implements Listener {
                         if(!room.roomConfig.canBreak.contains(block.getId()+"")){
                             event.setCancelled();
                             return;
-                        }else{
-                            room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
                         }
                     }
                 }
@@ -1096,6 +1095,13 @@ public class RoomManager implements Listener {
                 }
                 if(block.getId() == 14){
                     event.setDrops(new Item[]{Item.get(266)});
+                }
+                if(block.getId() == 74){
+                    //TODO 挖到红石
+                    event.setDrops(new Item[0]);
+                    room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
+                    info.getPlayer().addEffect(Effect.getEffect(10).setDuration(100));
+
                 }
             }
         }
