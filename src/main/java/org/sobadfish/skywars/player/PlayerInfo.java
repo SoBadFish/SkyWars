@@ -645,20 +645,20 @@ public class PlayerInfo {
      * */
     public void onUpdate(){
         //TODO 玩家进入房间后每秒就会调用这个方法
-        if(loadWaitTime > 1){
+        if(loadWaitTime > 0){
             loadWaitTime--;
             sendTitle("",loadWaitTime);
             sendSubTitle("&e"+loadWaitTime+" &6秒后开始");
-        }else{
-            if(player.isImmobile()){
-                player.setImmobile(false);
-                sendTitle("&a开始!");
-                player.getInventory().addItem(new ItemSwordStone());
-                player.getInventory().addItem(new ItemPickaxeIron());
-                player.getInventory().addItem(new ItemAxeStone());
+            if(loadWaitTime <= 0){
+                if(player.isImmobile()){
+                    player.setImmobile(false);
+                    sendTitle("&a开始!");
+                    player.getInventory().addItem(new ItemSwordStone());
+                    player.getInventory().addItem(new ItemPickaxeIron());
+                    player.getInventory().addItem(new ItemAxeStone());
 
+                }
             }
-
         }
         if (!isWatch()) {
             if (getPlayer().getInventory().getItemInHand().getId() == 345) {
