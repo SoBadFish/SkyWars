@@ -1096,6 +1096,12 @@ public class RoomManager implements Listener {
                         }
                     }
                 }
+                BlockEntity entityChest = block.level.getBlockEntity(block);
+                if(entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable) {
+                    LinkedHashMap<Integer,Item> integers = room.getRandomItem(((InventoryHolder) entityChest).getInventory().getSize(),block);
+                    event.setDrops(integers.values().toArray(new Item[0]));
+                    info.addSound(Sound.MOB_ZOMBIE_WOODBREAK);
+                }
                 if(block.getId() == 15){
                     event.setDrops(new Item[]{Item.get(265)});
                 }
@@ -1105,7 +1111,7 @@ public class RoomManager implements Listener {
                 if(block.getId() == 74 || block.getId() == 73){
                     //TODO 挖到红石
                     event.setDrops(new Item[0]);
-                    room.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
+                    info.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
                     info.getPlayer().addEffect(Effect.getEffect(10).setDuration(100));
 
                 }
