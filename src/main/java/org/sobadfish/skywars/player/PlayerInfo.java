@@ -649,7 +649,8 @@ public class PlayerInfo {
         //TODO 玩家进入房间后每秒就会调用这个方法
         if(loadWaitTime > 0){
             loadWaitTime--;
-            sendActionBar("游戏开始: ▶"+FunctionManager.drawLine(loadWaitTime,10,"&e■","&7■")+" "+loadWaitTime);
+            sendTitle("",loadWaitTime);
+            sendSubTitle("&e"+loadWaitTime+" &6秒后开始");
         }else{
             if(player.isImmobile()){
                 player.setImmobile(false);
