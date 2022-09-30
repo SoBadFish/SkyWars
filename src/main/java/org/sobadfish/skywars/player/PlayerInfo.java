@@ -420,12 +420,7 @@ public class PlayerInfo {
 
         //内部定时器
         Position pos = teamInfo.getSpawnLocation();
-        List<Position> sg = FunctionManager.spawnGlass(pos);
-        FunctionManager.sendBlock(sg, Block.GLASS,
-                new ArrayList<>(gameRoom.roomConfig.getWorldInfo()
-                        .getGameWorld().getPlayers().values()));
 
-        glass.addAll(sg);
         loadWaitTime = 10;
 
         boolean teleport;
@@ -658,9 +653,7 @@ public class PlayerInfo {
         }else{
             if(player.isImmobile()){
                 player.setImmobile(false);
-                FunctionManager.unSendBlock(glass,
-                        new ArrayList<>(gameRoom.roomConfig.getWorldInfo()
-                        .getGameWorld().getPlayers().values()));
+
                 sendTitle("&a开始!");
 
             }

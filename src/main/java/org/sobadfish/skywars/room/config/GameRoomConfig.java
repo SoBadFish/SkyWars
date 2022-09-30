@@ -330,6 +330,9 @@ public class GameRoomConfig {
     }
 
     public void save(){
+        if(!new File(TotalManager.getDataFolder()+"/rooms/"+getName()+"/room.yml").exists()){
+            TotalManager.saveResource("room.yml","/rooms/"+name+"/room.yml",false);
+        }
         //TODO 保存配置逻辑
         Config config = new Config(TotalManager.getDataFolder()+"/rooms/"+getName()+"/room.yml",Config.YAML);
         config.set("world",worldInfo.getLevel());
@@ -355,6 +358,9 @@ public class GameRoomConfig {
         config.set("defeatCmd",defeatCommand);
         config.set("deathDrop",deathDrop);
         config.set("victoryCmd",victoryCommand);
+        config.set("ban-break",banBreak);
+        config.set("can-break",canBreak);
+
         config.set("roomStartMessage",gameStartMessage);
         List<Map<String,Object>> pos = new ArrayList<>();
         for(FloatTextInfoConfig floatTextInfoConfig: floatTextInfoConfigs){
