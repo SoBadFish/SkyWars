@@ -469,13 +469,14 @@ public class RoomManager implements Listener {
         if(event.getEntity() instanceof Player){
             PlayerInfo playerInfo = getPlayerInfo((EntityHuman) event.getEntity());
             if(playerInfo != null) {
+
                 if (playerInfo.isWatch()) {
                     playerInfo.sendForceMessage("&c你处于观察者模式");
                     event.setCancelled();
                     return;
                 }
                 GameRoom room = playerInfo.getGameRoom();
-                if (room.getType() == GameRoom.GameType.WAIT) {
+                if (room.getType() == GameRoom.GameType.WAIT || room.getType() == GameType.END || room.getType() == GameType.CLOSE) {
                     event.setCancelled();
                     return;
                 }
