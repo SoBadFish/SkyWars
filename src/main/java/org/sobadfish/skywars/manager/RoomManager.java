@@ -622,6 +622,11 @@ public class RoomManager implements Listener {
 
                     if(room.roomConfig.items.size() > 0) {
                         if (room.getType() == GameType.START) {
+                            PlayerInfo playerInfo = room.getPlayerInfo(event.getPlayer());
+                            if(playerInfo.loadWaitTime > 0){
+                                event.setCancelled();
+                                return;
+                            }
                             ItemConfig config = room.getRandomItemConfig(block);
                             if (config != null) {
                                 BlockEntity entityChest = block.level.getBlockEntity(block);

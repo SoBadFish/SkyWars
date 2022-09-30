@@ -10,9 +10,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemColorArmor;
-import cn.nukkit.item.ItemPickaxeIron;
+import cn.nukkit.item.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
@@ -655,6 +653,9 @@ public class PlayerInfo {
             if(player.isImmobile()){
                 player.setImmobile(false);
                 sendTitle("&a开始!");
+                player.getInventory().addItem(new ItemSwordStone());
+                player.getInventory().addItem(new ItemPickaxeIron());
+                player.getInventory().addItem(new ItemAxeStone());
 
             }
 
