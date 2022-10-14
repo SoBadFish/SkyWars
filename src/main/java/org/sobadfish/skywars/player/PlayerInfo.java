@@ -809,9 +809,20 @@ public class PlayerInfo {
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){
             return;
         }
+
+
         player.teleport(teamInfo.getSpawnLocation());
         deathCount++;
+
         if(event != null) {
+            //掉落物品
+            if(gameRoom != null){
+                if(gameRoom.getRoomConfig().isDeathDrop()){
+                    for(Item item: player.getInventory().getContents().values()){
+                        player.level.dropItem(player,item,new Vector3(0,0.5,0));
+                    }
+                }
+            }
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if(damageByInfo != null){
                     gameRoom.sendMessage(this + " &e被 &r" + damageByInfo + " 推入虚空。");
@@ -866,13 +877,7 @@ public class PlayerInfo {
         }
         playerType = PlayerType.WATCH;
         damageByInfo = null;
-        if(gameRoom != null){
-            if(gameRoom.getRoomConfig().isDeathDrop()){
-                for(Item item: player.getInventory().getContents().values()){
-                    player.level.dropItem(player,item,new Vector3(0,0.5,0));
-                }
-            }
-        }
+
         player.getInventory().clearAll();
         player.getOffhandInventory().clearAll();
         if(playerType == PlayerType.WATCH){

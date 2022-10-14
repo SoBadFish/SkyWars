@@ -253,7 +253,7 @@ public class GameRoomConfig {
                 roomConfig.quitRoomCommand = new ArrayList<>(room.getStringList("QuitRoom"));
                 roomConfig.victoryCommand = new ArrayList<>(room.getStringList("victoryCmd"));
                 roomConfig.defeatCommand = new ArrayList<>(room.getStringList("defeatCmd"));
-                roomConfig.deathDrop = room.getBoolean("deathDrop",false);
+                roomConfig.deathDrop = room.getBoolean("deathDrop",true);
                 roomConfig.canBreak = new ArrayList<>(room.getStringList("can-break"));
                 roomConfig.banBreak = new ArrayList<>(room.getStringList("ban-break"));
 
