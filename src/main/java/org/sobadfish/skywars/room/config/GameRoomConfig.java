@@ -138,7 +138,11 @@ public class GameRoomConfig {
     /**
      * 刷新箱子物品概率
      * */
-    private int round = 15;
+    public int round = 15;
+    /**
+     * 刷新箱子的时间
+     * */
+    public int resetTime = 0;
 
 
 
@@ -244,16 +248,16 @@ public class GameRoomConfig {
                 }
                 GameRoomConfig roomConfig = new GameRoomConfig(name,worldInfoConfig,time,waitTime,maxWaitTime,minPlayerSize,maxPlayerSize,teamInfoConfigs);
                 roomConfig.hasWatch = room.getBoolean("hasWatch",true);
-                roomConfig.reSpawnTime = room.getInt("reSpawnTime",0);
                 roomConfig.banCommand = new ArrayList<>(room.getStringList("ban-command"));
                 roomConfig.isAutomaticNextRound = room.getBoolean("AutomaticNextRound",true);
                 roomConfig.quitRoomCommand = new ArrayList<>(room.getStringList("QuitRoom"));
                 roomConfig.victoryCommand = new ArrayList<>(room.getStringList("victoryCmd"));
                 roomConfig.defeatCommand = new ArrayList<>(room.getStringList("defeatCmd"));
-                roomConfig.deathDrop = room.getBoolean("deathDrop",false);
+                roomConfig.deathDrop = room.getBoolean("deathDrop",true);
                 roomConfig.canBreak = new ArrayList<>(room.getStringList("can-break"));
                 roomConfig.banBreak = new ArrayList<>(room.getStringList("ban-break"));
 
+                roomConfig.resetTime = room.getInt("resetTime",120);
                 //TODO 如果小游戏需要使用箱子内随机刷新物品 就解开这个配置
                 //////////////////////////////////////////////////////////
                 if(!new File(file+"/items.yml").exists()){
@@ -326,6 +330,9 @@ public class GameRoomConfig {
     }
 
     public void save(){
+        if(!new File(TotalManager.getDataFolder()+"/rooms/"+getName()+"/room.yml").exists()){
+            TotalManager.saveResource("room.yml","/rooms/"+name+"/room.yml",false);
+        }
         //TODO 保存配置逻辑
         Config config = new Config(TotalManager.getDataFolder()+"/rooms/"+getName()+"/room.yml",Config.YAML);
         config.set("world",worldInfo.getLevel());
@@ -351,6 +358,9 @@ public class GameRoomConfig {
         config.set("defeatCmd",defeatCommand);
         config.set("deathDrop",deathDrop);
         config.set("victoryCmd",victoryCommand);
+        config.set("ban-break",banBreak);
+        config.set("can-break",canBreak);
+
         config.set("roomStartMessage",gameStartMessage);
         List<Map<String,Object>> pos = new ArrayList<>();
         for(FloatTextInfoConfig floatTextInfoConfig: floatTextInfoConfigs){

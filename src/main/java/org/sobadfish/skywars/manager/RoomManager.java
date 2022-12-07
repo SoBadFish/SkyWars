@@ -6,6 +6,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBed;
 import cn.nukkit.block.BlockCraftingTable;
+import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityNameable;
 import cn.nukkit.command.ConsoleCommandSender;
@@ -19,6 +20,7 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
@@ -37,6 +39,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.event.*;
 import org.sobadfish.skywars.item.ItemIDSunName;
@@ -466,13 +469,14 @@ public class RoomManager implements Listener {
         if(event.getEntity() instanceof Player){
             PlayerInfo playerInfo = getPlayerInfo((EntityHuman) event.getEntity());
             if(playerInfo != null) {
+
                 if (playerInfo.isWatch()) {
                     playerInfo.sendForceMessage("&c你处于观察者模式");
                     event.setCancelled();
                     return;
                 }
                 GameRoom room = playerInfo.getGameRoom();
-                if (room.getType() == GameRoom.GameType.WAIT) {
+                if (room.getType() == GameRoom.GameType.WAIT || room.getType() == GameType.END || room.getType() == GameType.CLOSE) {
                     event.setCancelled();
                     return;
                 }
@@ -523,8 +527,10 @@ public class RoomManager implements Listener {
                             TeamInfo t2 = damageInfo.getTeamInfo();
                             if (t1 != null && t2 != null) {
                                 if (t1.getTeamConfig().getName().equalsIgnoreCase(t2.getTeamConfig().getName())) {
-                                    event.setCancelled();
-                                    return;
+                                    if(!t1.getTeamConfig().getTeamConfig().isCanPvp()){
+                                        event.setCancelled();
+                                        return;
+                                    }
                                 }
                             }
                             ///////////////// 阻止队伍PVP///////////////
@@ -588,12 +594,12 @@ public class RoomManager implements Listener {
         Player player = event.getPlayer();
         if(event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR || event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             Item item = event.getItem();
-            if(event.getBlock() instanceof BlockCraftingTable || event.getBlock() instanceof BlockBed){
-                if(TotalManager.getRoomManager().getPlayerInfo(event.getPlayer()) != null){
-                    event.setCancelled();
-                    return;
-                }
-            }
+//            if(event.getBlock() instanceof BlockCraftingTable || event.getBlock() instanceof BlockBed){
+//                if(TotalManager.getRoomManager().getPlayerInfo(event.getPlayer()) != null){
+//                    event.setCancelled();
+//                    return;
+//                }
+//            }
             if (playerJoin.containsKey(player.getName())) {
                 String roomName = playerJoin.get(player.getName());
                 GameRoom room = getRoom(roomName);
@@ -618,6 +624,11 @@ public class RoomManager implements Listener {
 
                     if(room.roomConfig.items.size() > 0) {
                         if (room.getType() == GameType.START) {
+                            PlayerInfo playerInfo = room.getPlayerInfo(event.getPlayer());
+                            if(playerInfo.loadWaitTime > 0){
+                                event.setCancelled();
+                                return;
+                            }
                             ItemConfig config = room.getRandomItemConfig(block);
                             if (config != null) {
                                 BlockEntity entityChest = block.level.getBlockEntity(block);
@@ -963,8 +974,32 @@ public class RoomManager implements Listener {
         if(room != null) {
             PlayerInfo info = room.getPlayerInfo(player);
             if (info != null) {
-                event.setCancelled();
+                if(event.getRecipe().getResult().getId() == Block.CHEST) {
+                    event.setCancelled();
+                }
             }
+        }
+    }
+
+    /**
+     * 游戏地图的爆炸保护
+     * */
+
+    @EventHandler
+    public void onEntityExplodeEvent(EntityExplodeEvent event){
+        Level level = event.getPosition().getLevel();
+        GameRoom room = getGameRoomByLevel(level);
+        if(room != null) {
+            ArrayList<Block> blocks = new ArrayList<>(event.getBlockList());
+            for (Block block : event.getBlockList()) {
+                if (!room.worldInfo.getPlaceBlock().contains(block)) {
+                    blocks.remove(block);
+
+                }else{
+                    room.worldInfo.getPlaceBlock().remove(block);
+                }
+            }
+            event.setBlockList(blocks);
         }
     }
 
@@ -992,8 +1027,24 @@ public class RoomManager implements Listener {
                     event.setCancelled();
 
                 }else{
+                    if (block instanceof BlockTNT) {
+                        try {
+                            event.setCancelled();
+                            ((BlockTNT) block).prime(40);
+                            Item i2 = item.clone();
+                            i2.setCount(1);
+                            event.getPlayer().getInventory().removeItem(i2);
+                            return;
+                        } catch (Exception e) {
+                            event.setCancelled();
+                            return;
+                        }
+                    }
+
+
                     room.worldInfo.onChangeBlock(block,true);
                 }
+
 
             }
         }
@@ -1014,29 +1065,57 @@ public class RoomManager implements Listener {
             return;
         }
         Block block = event.getBlock();
+
         GameRoom room = getGameRoomByLevel(level);
         if(room != null){
             PlayerInfo info = room.getPlayerInfo(event.getPlayer());
             if(info != null) {
+
                 if(info.isWatch()) {
                     info.sendMessage("&c无法破坏地图方块");
                     event.setCancelled();
+                    return;
                 }
                 if(room.roomConfig.banBreak.size() > 0){
                     if(room.roomConfig.banBreak.contains(block.getId()+"")){
                         if(!room.roomConfig.canBreak.contains(block.getId()+"")){
                             event.setCancelled();
+                            return;
                         }
                     }
+
                     room.worldInfo.onChangeBlock(block, false);
 
+
                 }else {
+
                     if (room.worldInfo.getPlaceBlock().contains(block) || room.roomConfig.canBreak.contains(block.getId()+"")) {
                         room.worldInfo.onChangeBlock(block, false);
                     } else {
-                        info.sendMessage("&c无法破坏地图方块");
-                        event.setCancelled();
+                        if(!room.roomConfig.canBreak.contains(block.getId()+"")){
+                            event.setCancelled();
+                            return;
+                        }
                     }
+                }
+                BlockEntity entityChest = block.level.getBlockEntity(block);
+                if(entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable) {
+                    LinkedHashMap<Integer,Item> integers = room.getRandomItem(((InventoryHolder) entityChest).getInventory().getSize(),block);
+                    event.setDrops(integers.values().toArray(new Item[0]));
+                    info.addSound(Sound.MOB_ZOMBIE_WOODBREAK);
+                }
+                if(block.getId() == 15){
+                    event.setDrops(new Item[]{Item.get(265)});
+                }
+                if(block.getId() == 14){
+                    event.setDrops(new Item[]{Item.get(266)});
+                }
+                if(block.getId() == 74 || block.getId() == 73){
+                    //TODO 挖到红石
+                    event.setDrops(new Item[0]);
+                    info.addSound(Sound.BLOCK_END_PORTAL_FRAME_FILL);
+                    info.getPlayer().addEffect(Effect.getEffect(10).setDuration(100));
+
                 }
             }
         }

@@ -63,6 +63,8 @@ public class GameRoom {
 
     public int loadTime = -1;
 
+
+
     private GameType type;
 
     private final ArrayList<TeamInfo> teamInfos = new ArrayList<>();

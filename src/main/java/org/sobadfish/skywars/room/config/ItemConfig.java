@@ -14,10 +14,13 @@ public class ItemConfig {
 
     public String name;
 
+    public int time;
+
     public List<Item> items;
 
-    public ItemConfig(String block, String name, List<Item> items){
+    public ItemConfig(String block, String name,int time, List<Item> items){
         this.block = block;
+        this.time = time;
         this.name = name;
         this.items = items;
     }

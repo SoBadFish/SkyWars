@@ -1,7 +1,6 @@
 world: ""
 gameTime: 1200
 callbackY: 17
-reSpawnTime: 5
 deathDrop: true
 hasWatch: true
 waitTime: 120
@@ -15,16 +14,11 @@ QuitRoom: []
 AutomaticNextRound: true
 victoryCmd: []
 defeatCmd: []
-
+resetTime: 120
 floatSpawnPos: []
-ban-break: []
-can-break:
-  - "15"
-  - "14"
-  - "21"
-  - "16"
-  - "56"
-  - "129"
+ban-break:
+  - "7"
+can-break: []
 round: 15
 
 roomStartMessage:

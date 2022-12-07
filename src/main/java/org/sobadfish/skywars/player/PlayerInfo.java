@@ -3,14 +3,14 @@ package org.sobadfish.skywars.player;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockStone;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemColorArmor;
+import cn.nukkit.item.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
@@ -64,6 +64,8 @@ public class PlayerInfo {
 
     public int updateTime = 0;
 
+    public int loadWaitTime = 0;
+
     public int assists = 0;
 
     private PlayerInfo damageByInfo = null;
@@ -71,6 +73,8 @@ public class PlayerInfo {
     public PlayerInventory inventory;
 
     public PlayerEnderChestInventory eInventory;
+
+    public ArrayList<Position> glass = new ArrayList<>();
 
     //助攻
     public LinkedHashMap<PlayerInfo,Long> assistsPlayers = new LinkedHashMap<>();
@@ -295,6 +299,7 @@ public class PlayerInfo {
                     ScoreboardDisplay scoreboardDisplay = scoreboard.addDisplay(DisplaySlot.SIDEBAR,
                             "dumy", TextFormat.colorize('&', title));
 
+
                     ArrayList<String> list = message.getLore();
                     for (int line = 0; line < list.size(); line++) {
                         String s = list.get(line);
@@ -413,11 +418,8 @@ public class PlayerInfo {
 
         //内部定时器
         Position pos = teamInfo.getSpawnLocation();
-        FunctionManager.sendBlock(FunctionManager.spawnGlass(pos), Block.GLASS,
-                new ArrayList<>(gameRoom.roomConfig.getWorldInfo()
-                        .getGameWorld().getPlayers().values()));
 
-        gameRoom.worldInfo.spawnBlock.addAll(FunctionManager.spawnGlass(pos));
+        loadWaitTime = 10;
 
         boolean teleport;
         try {
@@ -425,6 +427,7 @@ public class PlayerInfo {
         }catch (Exception e){
             teleport = false;
         }
+        player.setImmobile(true);
         if(!teleport){
             throw new NullPointerException("无法将玩家传送到队伍出生点");
         }
@@ -598,8 +601,13 @@ public class PlayerInfo {
 
         }else{
 
-            lore.add("游戏结束: &a"+formatTime(getGameRoom().loadTime));
-            if(gameRoom.roomConfig.teamConfigs.size() > 0){
+            lore.add("游戏结束: &a"+formatTime1(getGameRoom().loadTime));
+            lore.add("    ");
+            lore.add("箱子刷新: &a"+formatTime1(gameRoom.roomConfig.resetTime - gameRoom.worldInfo.resetTime));
+            lore.add("     ");
+
+
+            if(gameRoom.roomConfig.teamConfigs.size() > 1){
                 for(TeamInfo teamInfo: gameRoom.getTeamInfos()){
                     String me = "";
                     if(getTeamInfo() != null && getTeamInfo().equals(teamInfo)){
@@ -609,11 +617,11 @@ public class PlayerInfo {
                 }
             }else{
                 TeamInfo teamInfo = gameRoom.getTeamInfos().get(0);
-                lore.add("   ");
+                lore.add("    ");
                 lore.add(" 存活人数: &a "+teamInfo.getLivePlayer().size() +" &7/&a "+teamInfo.getTeamPlayers().size());
             }
 
-            lore.add("      ");
+            lore.add("       ");
             lore.add("&b击杀数: &a"+killCount);
             lore.add("&e助攻数: &a"+assists);
 
@@ -629,16 +637,47 @@ public class PlayerInfo {
         }
         return lore;
     }
-    private int loadTime = 0;
+
 
     private boolean isSendkey = false;
+
 
     /**
      * 定时任务
      * */
     public void onUpdate(){
         //TODO 玩家进入房间后每秒就会调用这个方法
-
+        if(loadWaitTime > 0){
+            loadWaitTime--;
+            sendTitle("",loadWaitTime);
+            sendSubTitle("&e"+loadWaitTime+" &6秒后开始");
+            if(loadWaitTime <= 0){
+                if(player.isImmobile()){
+                    player.setImmobile(false);
+                    sendTitle("&a开始!");
+                }
+            }
+        }
+        if (!isWatch()) {
+            if (getPlayer().getInventory().getItemInHand().getId() == 345) {
+                //拿着指南针
+                for (PlayerInfo info : gameRoom.getLivePlayers()) {
+                    if (info.equals(this)) {
+                        continue;
+                    }
+                    double dis = info.getPlayer().distance(this.player);
+                    int d =  getPlayer().getInventory().getItemInHand().count * 10;
+                    if (dis < d) {
+                        sendActionBar(info + "在你附近\n&7》&e" + String.format("%.2f",dis) + " 米 &7《");
+                    }
+                }
+            }
+            for(Item item: getPlayer().getInventory().getContents().values()){
+                if(gameRoom.getRoomConfig().items.containsKey(item.getId()+"")){
+                    getPlayer().getInventory().remove(item);
+                }
+            }
+        }
         //助攻间隔
         LinkedHashMap<PlayerInfo,Long> ass = new LinkedHashMap<>(assistsPlayers);
         for(Map.Entry<PlayerInfo,Long> entry: ass.entrySet()){
@@ -740,6 +779,8 @@ public class PlayerInfo {
         PlayerGameDeathEvent event1 = new PlayerGameDeathEvent(this,getGameRoom(),TotalManager.getPlugin());
         Server.getInstance().getPluginManager().callEvent(event1);
 
+//         mob.guardian.death
+        gameRoom.addSound(Sound.MOB_GUARDIAN_DEATH);
 
         player.removeAllEffects();
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){
@@ -758,7 +799,8 @@ public class PlayerInfo {
             if (getPlayer() instanceof Player) {
                 ((Player) getPlayer()).setGamemode(3);
             }
-            playerType = PlayerType.WATCH;
+
+
             if(gameRoom.getRoomConfig().teamConfigs.size() == 1) {
                 teamInfo.getDefeatPlayers().add(this);
             }
@@ -767,15 +809,31 @@ public class PlayerInfo {
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){
             return;
         }
+
+
         player.teleport(teamInfo.getSpawnLocation());
         deathCount++;
+
         if(event != null) {
+            //掉落物品
+            if(gameRoom != null){
+                if(gameRoom.getRoomConfig().isDeathDrop()){
+                    for(Item item: player.getInventory().getContents().values()){
+                        player.level.dropItem(player,item,new Vector3(0,0.5,0));
+                    }
+                }
+            }
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if(damageByInfo != null){
                     gameRoom.sendMessage(this + " &e被 &r" + damageByInfo + " 推入虚空。");
                     addKill(damageByInfo);
+                }else {
+                    gameRoom.sendMessage(this + "&e掉入虚空");
                 }
-                gameRoom.sendMessage(this + "&e掉入虚空");
+                player.teleport(getGameRoom().worldInfo.getConfig().getGameWorld().getSafeSpawn());
+                Position position = teamInfo.getSpawnLocation();
+                player.teleport(new Position(player.x, position.y + 64, player.z, getLevel()));
+
 
             } else if (event instanceof EntityDamageByEntityEvent) {
                 Entity entity = ((EntityDamageByEntityEvent) event).getDamager();
@@ -817,15 +875,9 @@ public class PlayerInfo {
                 }
             }
         }
-//        playerType = PlayerType.DEATH;
+        playerType = PlayerType.WATCH;
         damageByInfo = null;
-        if(gameRoom != null){
-            if(gameRoom.getRoomConfig().isDeathDrop()){
-                for(Item item: player.getInventory().getContents().values()){
-                    player.level.dropItem(player,item,new Vector3(0,0.5,0));
-                }
-            }
-        }
+
         player.getInventory().clearAll();
         player.getOffhandInventory().clearAll();
         if(playerType == PlayerType.WATCH){

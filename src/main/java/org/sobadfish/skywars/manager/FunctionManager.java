@@ -31,8 +31,25 @@ public class FunctionManager {
         int l = (int) (size * progress);
         int other = size - l;
         StringBuilder ls = new StringBuilder();
-        if(l > 0){
-            for(int i = 0;i < l;i++){
+        return mLine(l, hasDataChar, noDataChar, ls, other);
+    }
+    /**
+     * 画一条进度条
+     * ■■■■□□□□□□
+     * @param progress 进度（百分比）
+     * @param size 总长度
+     * @param hasDataChar 自定义有数据图案 ■
+     * @param noDataChar 自定义无数据图案 □
+     * */
+    public static String drawLine(int progress,int size,String hasDataChar,String noDataChar){
+        StringBuilder ls = new StringBuilder();
+        int other = size - progress;
+        return mLine(progress, hasDataChar, noDataChar, ls, other);
+    }
+
+    private static String mLine(int progress, String hasDataChar, String noDataChar, StringBuilder ls, int other) {
+        if(progress > 0){
+            for(int i = 0;i < progress;i++){
                 ls.append(hasDataChar);
             }
         }
@@ -148,6 +165,10 @@ public class FunctionManager {
                 String block = map.get("block").toString().split(":")[0];
 
                 List<Item> items = new ArrayList<>();
+                int time = -1;
+                if(map.containsKey("time")){
+                    time = Integer.parseInt(map.get("time").toString());
+                }
                 String name = "未命名";
                 if(map.containsKey("items")) {
                     List<?> list = (List<?>) map.get("items");
@@ -160,7 +181,7 @@ public class FunctionManager {
                     name = map.get("name").toString();
                 }
                 TotalManager.sendMessageToConsole("&e物品读取完成 &7("+block+")&r》"+items.size()+"《");
-                configLinkedHashMap.put(block,new ItemConfig(block,name,items));
+                configLinkedHashMap.put(block,new ItemConfig(block,name,time,items));
             }
         }
         TotalManager.sendMessageToConsole("&a物品加载完成: &r》"+configLinkedHashMap.size()+"《");
@@ -197,52 +218,7 @@ public class FunctionManager {
     }
     private static ExecutorService service = Executors.newSingleThreadExecutor();
 
-    /**
-     * 由于放置方块在nk核心中是被锁的状态
-     * 每个地方都调用setBlock会造成极大的卡顿，于是
-     * 通过发包来解决
-     * */
-    public static void sendBlock(List<Position> positions,int blockId,List<Player> players){
-        for(Position pos: positions){
-            UpdateBlockPacket updateBlock = new UpdateBlockPacket();
-            updateBlock.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
-            updateBlock.x = (int) pos.x;
-            updateBlock.y = (int) pos.y;
-            updateBlock.z = (int) pos.z;
-            for(Player player: players) {
-                if (TotalManager.IS_PM1E) {
-                    updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(player.protocol, blockId, 0);
-                } else {
-                    updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(blockId, 0);
-                }
-                player.dataPacket(updateBlock);
-            }
-        }
 
-    }
-
-    /**
-     * 移除包
-     * */
-    public static void unSendBlock(List<Position> positions,List<Player> players){
-        for(Position pos: positions){
-            service.execute(() -> {
-                UpdateBlockPacket updateBlock = new UpdateBlockPacket();
-                updateBlock.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
-                updateBlock.x = (int) pos.x;
-                updateBlock.y = (int) pos.y;
-                updateBlock.z = (int) pos.z;
-                for (Player player : players) {
-                    if (TotalManager.IS_PM1E) {
-                        updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(player.protocol, pos.getLevelBlock().getFullId(), 0);
-                    } else {
-                        updateBlock.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(pos.getLevelBlock().getFullId(), 0);
-                    }
-                    player.dataPacket(updateBlock);
-                }
-            });
-        }
-    }
 
     public static List<Position> spawnGlass(Position position){
         ArrayList<Position> glasses = new ArrayList<>();
