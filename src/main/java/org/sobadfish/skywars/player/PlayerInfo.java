@@ -786,6 +786,14 @@ public class PlayerInfo {
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){
             return;
         }
+        //掉落物品
+        if(gameRoom != null){
+            if(gameRoom.getRoomConfig().isDeathDrop()){
+                for(Item item: player.getInventory().getContents().values()){
+                    player.level.dropItem(player,item,new Vector3(0,0.5,0));
+                }
+            }
+        }
         if(gameRoom != null && gameRoom.roomConfig.reSpawnTime > 0) {
             if (getPlayer() instanceof Player) {
                 ((Player) getPlayer()).setGamemode(3);
@@ -815,14 +823,6 @@ public class PlayerInfo {
         deathCount++;
 
         if(event != null) {
-            //掉落物品
-            if(gameRoom != null){
-                if(gameRoom.getRoomConfig().isDeathDrop()){
-                    for(Item item: player.getInventory().getContents().values()){
-                        player.level.dropItem(player,item,new Vector3(0,0.5,0));
-                    }
-                }
-            }
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 if(damageByInfo != null){
                     gameRoom.sendMessage(this + " &e被 &r" + damageByInfo + " 推入虚空。");
