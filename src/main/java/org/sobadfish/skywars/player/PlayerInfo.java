@@ -2,15 +2,12 @@ package org.sobadfish.skywars.player;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockStone;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.inventory.PlayerEnderChestInventory;
-import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
@@ -25,7 +22,6 @@ import de.theamychan.scoreboard.network.DisplaySlot;
 import de.theamychan.scoreboard.network.Scoreboard;
 import de.theamychan.scoreboard.network.ScoreboardDisplay;
 import org.sobadfish.skywars.event.PlayerGameDeathEvent;
-import org.sobadfish.skywars.manager.FunctionManager;
 import org.sobadfish.skywars.manager.TotalManager;
 import org.sobadfish.skywars.player.message.ScoreBoardMessage;
 import org.sobadfish.skywars.player.team.TeamInfo;
@@ -70,9 +66,9 @@ public class PlayerInfo {
 
     private PlayerInfo damageByInfo = null;
 
-    public PlayerInventory inventory;
+    public Map<Integer,Item> inventory = null;
 
-    public PlayerEnderChestInventory eInventory;
+    public Map<Integer,Item> eInventory = null;
 
     public ArrayList<Position> glass = new ArrayList<>();
 
@@ -157,8 +153,8 @@ public class PlayerInfo {
      * */
     public void init(){
         if(TotalManager.getConfig().getBoolean("save-playerInventory",true)){
-            inventory = getPlayer().getInventory();
-            eInventory = getPlayer().getEnderChestInventory();
+            inventory = getPlayer().getInventory().getContents();
+            eInventory = getPlayer().getEnderChestInventory().getContents();
         }
         getPlayer().setHealth(getPlayer().getMaxHealth());
         if(getPlayer() instanceof Player) {
@@ -510,8 +506,8 @@ public class PlayerInfo {
                 player.setHealth(player.getMaxHealth());
                 ((Player) player).setExperience(0,0);
                 if(inventory != null && eInventory != null){
-                    player.getInventory().setContents(inventory.getContents());
-                    player.getEnderChestInventory().setContents(eInventory.getContents());
+                    player.getInventory().setContents(inventory);
+                    player.getEnderChestInventory().setContents(eInventory);
                 }
                 if(getPlayer() instanceof Player) {
                     ((Player) getPlayer()).setGamemode(0);

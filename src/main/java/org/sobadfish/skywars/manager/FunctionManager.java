@@ -1,10 +1,7 @@
 package org.sobadfish.skywars.manager;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Position;
-import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.room.config.ItemConfig;
 
@@ -234,6 +231,31 @@ public class FunctionManager {
         glasses.add(position.add(0,2,-1));
         glasses.add(position.add(0,3,0));
         return glasses;
+    }
+
+    /**
+     * 将秒转换为时间显示格式 00:00
+     * @param s 秒
+     * @return 时间显示格式
+     * */
+    public static String formatTime(int s){
+        int min = s / 60;
+        int ss = s % 60;
+        String mi = min+"";
+        String sss = ss+"";
+        if(min < 10){
+            mi = "0"+mi;
+        }
+        if(ss < 10){
+            sss = "0"+ss;
+        }
+        if(min > 0){
+
+            return mi+":"+sss;
+        }else{
+            return "00:"+sss+"";
+        }
+
     }
 
 }

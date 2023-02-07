@@ -109,6 +109,13 @@ public class WorldInfoConfig {
     }
 
 
+    /**
+     * 还原地图核心算法
+     * @param roomName 房间名称
+     * @param levelName 地图名称
+     *
+     * @return 是否还原成功
+     * */
     public static boolean toPathWorld(String roomName,String levelName){
         try {
 
@@ -120,11 +127,17 @@ public class WorldInfoConfig {
             File[] files = world.listFiles();
             File f2 = new File(Server.getInstance().getFilePath() + File.separator + "worlds" + File.separator + levelName);
             if (!f2.exists()) {
-                f2.mkdirs();
+                if(!f2.mkdirs()){
+                    TotalManager.sendMessageToConsole("&c创建地图文件夹失败");
+                }
             }
             if (files != null && files.length > 0) {
                 if(Server.getInstance().isLevelLoaded(levelName)) {
                     Server.getInstance().unloadLevel(Server.getInstance().getLevelByName(levelName), true);
+                }
+                Utils.toDelete(f2);
+                if(!f2.exists() && !f2.mkdirs()){
+                    TotalManager.sendMessageToConsole("&c创建地图文件夹失败");
                 }
                 Utils.copyFiles(world, f2);
                 return true;

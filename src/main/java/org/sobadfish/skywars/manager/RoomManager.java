@@ -4,8 +4,6 @@ package org.sobadfish.skywars.manager;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockBed;
-import cn.nukkit.block.BlockCraftingTable;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityNameable;
@@ -18,10 +16,7 @@ import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityExplodeEvent;
-import cn.nukkit.event.entity.EntityLevelChangeEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.event.level.WeatherChangeEvent;
@@ -41,6 +36,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
+import org.sobadfish.skywars.entity.DamageFloatTextEntity;
+import org.sobadfish.skywars.entity.EntityTnt;
 import org.sobadfish.skywars.event.*;
 import org.sobadfish.skywars.item.ItemIDSunName;
 import org.sobadfish.skywars.item.button.RoomQuitItem;
@@ -552,6 +549,18 @@ public class RoomManager implements Listener {
                         event.setDamage(0, modifier);
                     }
                 }
+                if(!event.isCancelled()){
+                    if(TotalManager.getConfig().getBoolean("display-damage",true)){
+                        DamageFloatTextEntity floatTextEntity = new DamageFloatTextEntity(
+                                TextFormat.colorize('&',"&c-"+String.format("%.1f",event.getDamage())),
+                                event.getEntity().chunk,Entity.getDefaultNBT(
+                                event.getEntity().getPosition().add(0,0.8,0)
+                        ));
+                        floatTextEntity.spawnToAll();
+
+                        floatTextEntity.addMotion(1,0.8,90 / 180f);
+                    }
+                }
             }
         }
     }
@@ -814,6 +823,23 @@ public class RoomManager implements Listener {
         }
     }
 
+    @EventHandler
+    public void onEntitySpawnEvent(EntitySpawnEvent event){
+        //TODO 监听TNT生成 以及判断是否在房间
+        Entity entity = event.getEntity();
+        GameRoom room = getGameRoomByLevel(entity.level);
+        if(room != null) {
+            if (entity instanceof EntityPrimedTNT && !(entity instanceof EntityTnt)) {
+                //由于这个是私有方法，，得反射
+                EntityTnt entityTnt = new EntityTnt(entity.chunk,entity.namedTag);
+                entityTnt.setTick(60);
+                entityTnt.spawnToAll();
+                entity.close();
+
+            }
+        }
+    }
+
 
 
     @EventHandler
@@ -1030,7 +1056,7 @@ public class RoomManager implements Listener {
                     if (block instanceof BlockTNT) {
                         try {
                             event.setCancelled();
-                            ((BlockTNT) block).prime(40);
+                            ((BlockTNT) block).prime(60);
                             Item i2 = item.clone();
                             i2.setCount(1);
                             event.getPlayer().getInventory().removeItem(i2);

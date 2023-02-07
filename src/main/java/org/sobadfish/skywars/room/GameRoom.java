@@ -182,14 +182,14 @@ public class GameRoom {
         if(roomConfig.getWorldInfo().getGameWorld() == null){
             return null;
         }
-        if(WorldResetManager.RESET_QUEUE.containsKey(roomConfig)){
+        if(WorldResetManager.RESET_QUEUE.containsKey(roomConfig.name)){
             return null;
         }
         return new GameRoom(roomConfig);
     }
 
     public JoinType joinPlayerInfo(PlayerInfo info,boolean sendMessage){
-        if(WorldResetManager.RESET_QUEUE.containsKey(roomConfig)){
+        if(WorldResetManager.RESET_QUEUE.containsKey(roomConfig.name)){
             return JoinType.NO_JOIN;
         }
         if(info.getGameRoom() == null){
@@ -302,6 +302,7 @@ public class GameRoom {
             TeamInfo teamInfo = teamInfos.get(0);
             noTeam.addAll(teamInfo.getTeamPlayers());
         }
+        Collections.shuffle(noTeam);
         while(noTeam.size() > 0){
             for (TeamInfo manager: teamInfos){
                 if(manager.getTeamPlayers().size() == 0
@@ -794,7 +795,7 @@ public class GameRoom {
 //            level1.unloadChunks();
             worldInfo.setClose(true);
             worldInfo = null;
-            WorldResetManager.RESET_QUEUE.put(getRoomConfig(),level);
+            WorldResetManager.RESET_QUEUE.put(getRoomConfig().name,level);
         }else{
             worldInfo.setClose(true);
             worldInfo = null;
@@ -812,7 +813,7 @@ public class GameRoom {
         if(worldInfo == null){
             return itemLinkedHashMap;
         }
-        if(!worldInfo.clickChest.contains(block)){
+        if(!worldInfo.clickChest.containsKey(block)){
             List<Item> list = getRoundItems(block);
             if(list.size() > 0) {
                 for (int i = 0; i < size; i++) {
@@ -820,7 +821,7 @@ public class GameRoom {
                         itemLinkedHashMap.put(i, list.get(new Random().nextInt(list.size())));
                     }
                 }
-                worldInfo.clickChest.add(block);
+                worldInfo.clickChest(block);
             }
         }
         return itemLinkedHashMap;
