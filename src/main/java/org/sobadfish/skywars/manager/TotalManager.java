@@ -65,10 +65,7 @@ public class TotalManager {
     private static MenuRoomManager menuRoomManager;
 
     public static Boolean isDisabled(){
-        if(plugin != null){
-            return plugin.isDisabled();
-        }
-        return true;
+        return plugin.isDisabled();
     }
 
     public static PluginBase getPlugin() {
@@ -215,9 +212,6 @@ public class TotalManager {
     }
 
     public static File getDataFolder() {
-        if(isDisabled()){
-            return new File("");
-        }
         return plugin.getDataFolder();
     }
 
