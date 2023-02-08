@@ -772,6 +772,10 @@ public class PlayerInfo {
             ((Player) player).removeAllWindows();
             ((Player) player).getUIInventory().clearAll();
         }
+        if(gameRoom.getLivePlayers().size() == 1){
+            player.teleport(teamInfo.getSpawnLocation());
+            return;
+        }
         PlayerGameDeathEvent event1 = new PlayerGameDeathEvent(this,getGameRoom(),TotalManager.getPlugin());
         Server.getInstance().getPluginManager().callEvent(event1);
 
