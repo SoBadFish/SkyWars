@@ -7,6 +7,8 @@ import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.manager.data.PlayerDataManager;
 import org.sobadfish.skywars.manager.data.PlayerTopManager;
 import org.sobadfish.skywars.room.config.GameRoomConfig;
+import org.sobadfish.skywars.variable.GameNpcVariable;
+import org.sobadfish.skywars.variable.GameTipVariable;
 
 import java.io.File;
 
@@ -54,9 +56,22 @@ public class TotalManager {
 
     public static void init(PluginBase pluginBase){
         TotalManager.plugin = pluginBase;
+
         checkServer();
         loadConfig();
+        loadVariable();
         ThreadManager.init();
+    }
+
+    private static void loadVariable() {
+        try{
+            Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
+            GameNpcVariable.init();
+        }catch (Exception ignore){}
+        try{
+            Class.forName("tip.utils.variables.BaseVariable");
+            GameTipVariable.init();
+        }catch (Exception ignore){}
     }
 
 
@@ -88,7 +103,7 @@ public class TotalManager {
     }
 
     public static String getScoreBoardTitle(){
-        return TextFormat.colorize('&', plugin.getConfig().getString("scoreboard-title","&f[&a迷你战墙&f]"));
+        return TextFormat.colorize('&', plugin.getConfig().getString("scoreboard-title","&f[&a空岛战争&f]"));
     }
 
     public static void sendTipMessageToObject(String msg,Object o){

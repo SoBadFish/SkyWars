@@ -6,6 +6,7 @@ import org.sobadfish.skywars.command.GameAdminCommand;
 import org.sobadfish.skywars.command.GameCommand;
 import org.sobadfish.skywars.command.GameSpeakCommand;
 import org.sobadfish.skywars.manager.TotalManager;
+import org.sobadfish.skywars.proxy.ItemProxy;
 
 /**
 
@@ -27,7 +28,7 @@ public class SkyWarsMain extends PluginBase {
         this.getLogger().info(TextFormat.colorize('&',"&e         |__/                    "));
         this.getLogger().info(TextFormat.colorize('&',"&e正在加载"+TotalManager.GAME_NAME+" 插件 本版本为&av"+this.getDescription().getVersion()));
         this.getLogger().info(TextFormat.colorize('&',"&a插件加载完成，祝您使用愉快"));
-
+        ItemProxy.init();
         TotalManager.init(this);
         this.getServer().getCommandMap().register(TotalManager.GAME_NAME,new GameAdminCommand(TotalManager.COMMAND_ADMIN_NAME));
         this.getServer().getCommandMap().register(TotalManager.GAME_NAME,new GameCommand(TotalManager.COMMAND_NAME));
