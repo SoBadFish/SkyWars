@@ -51,7 +51,7 @@ import org.sobadfish.skywars.panel.items.PlayerItem;
 import org.sobadfish.skywars.player.PlayerData;
 import org.sobadfish.skywars.player.PlayerInfo;
 import org.sobadfish.skywars.player.team.TeamInfo;
-import org.sobadfish.skywars.proxy.ItemProxy;
+
 import org.sobadfish.skywars.room.GameRoom;
 import org.sobadfish.skywars.room.GameRoom.GameType;
 import org.sobadfish.skywars.room.config.GameRoomConfig;
@@ -669,19 +669,10 @@ public class RoomManager implements Listener {
         for(TeamInfo teamInfoConfig: room.getTeamInfos()){
             Item wool = teamInfoConfig.getTeamConfig().getTeamConfig().getBlockWoolColor();
             //得随时翻译回来
-            String ws = ItemProxy.asNewWool(wool.getId()+"");
-            int id,damage;
-            if(ws != null){
-                id = Integer.parseInt(ws.split(":")[0]);
-                damage = Integer.parseInt(ws.split(":")[1]);
-            }else{
-                id = wool.getId();
-                damage = wool.getDamage();
-            }
 
             simple.addButton(new ElementButton(TextFormat.colorize('&', teamInfoConfig +" &r"+teamInfoConfig.getTeamPlayers().size()+" / "+(room.getRoomConfig().getMaxPlayerSize() / room.getTeamInfos().size())),
                     new ElementButtonImageData("path",
-                            ItemIDSunName.getIDByPath(id,damage))));
+                            ItemIDSunName.getIDByPath(wool.getId(),wool.getDamage()))));
         }
         player.showFormWindow(simple,102);
         TeamChoseItem.clickAgain.remove(player);

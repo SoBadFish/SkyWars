@@ -3,7 +3,7 @@ package org.sobadfish.skywars.player.team.config;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
-import org.sobadfish.skywars.proxy.ItemProxy;
+
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -107,7 +107,7 @@ public class TeamConfig {
         int g = Integer.parseInt(m.get("g").toString());
         int b = Integer.parseInt(m.get("b").toString());
 
-        TeamConfig teamConfig = new TeamConfig(name,nameColor, ItemProxy.getItem(map.get("blockWoolColor")
+        TeamConfig teamConfig = new TeamConfig(name,nameColor, Item.fromString(map.get("blockWoolColor")
                 .toString()),new BlockColor(r,g,b));
         if(map.containsKey("canPvp")){
             teamConfig.setCanPvp(Boolean.parseBoolean(map.get("canPvp").toString()));
