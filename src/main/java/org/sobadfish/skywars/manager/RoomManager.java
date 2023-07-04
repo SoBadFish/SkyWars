@@ -1239,4 +1239,12 @@ public class RoomManager implements Listener {
     }
 
 
+    @EventHandler
+    public void onWorldReloadEvent(ReloadWorldEvent event) {
+        Server.getInstance().loadLevel(event.world);
+        TotalManager.sendMessageToConsole("&r释放房间 " + event.world);
+        TotalManager.sendMessageToConsole("&r房间 " + event.world + " 已回收");
+
+    }
+
 }

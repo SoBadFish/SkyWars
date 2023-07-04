@@ -5,11 +5,11 @@ import cn.nukkit.Server;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.scheduler.AsyncTask;
 import org.sobadfish.skywars.entity.GameFloatText;
+import org.sobadfish.skywars.event.ReloadWorldEvent;
 import org.sobadfish.skywars.manager.*;
 import org.sobadfish.skywars.room.GameRoom;
 import org.sobadfish.skywars.room.config.GameRoomConfig;
 import org.sobadfish.skywars.room.config.WorldInfoConfig;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,9 +107,7 @@ public class PluginMasterRunnable extends ThreadManager.AbstractBedWarRunnable {
                             if (WorldInfoConfig.toPathWorld(map.getKey(), map.getValue())) {
                                 TotalManager.sendMessageToConsole("&a" + map.getKey() + " 地图已还原");
                             }
-                            Server.getInstance().loadLevel(map.getValue());
-                            TotalManager.sendMessageToConsole("&r释放房间 " + map.getKey());
-                            TotalManager.sendMessageToConsole("&r房间 " + map.getKey() + " 已回收");
+                            Server.getInstance().getPluginManager().callEvent(new ReloadWorldEvent(TotalManager.getPlugin(), map.getKey()));
                             bufferQueue.add(TotalManager.getRoomManager().getRoomConfig(map.getKey()));
                         }
                         //TODO 从列表中移除
@@ -123,6 +121,8 @@ public class PluginMasterRunnable extends ThreadManager.AbstractBedWarRunnable {
                     }
                 }
             });
+
+
 
 
         }catch (Exception e){
