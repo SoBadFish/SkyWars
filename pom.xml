@@ -6,7 +6,7 @@
 
     <groupId>org.sobadfish</groupId>
     <artifactId>SkyWars</artifactId>
-    <version>1.0.6-NOASYNC</version>
+    <version>1.0.7</version>
 
     <dependencies>
         <dependency>
