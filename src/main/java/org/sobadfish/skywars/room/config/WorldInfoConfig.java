@@ -77,7 +77,7 @@ public class WorldInfoConfig {
         //主世界地图
         File world = new File(nameFile+File.separator+"world"+File.separator+levelName);
         if(world.exists() && world.isDirectory()){
-            if(toPathWorld(roomName, levelName)){
+            if(toPathWorld(roomName, levelName,true)){
                 Server.getInstance().loadLevel(levelName);
                 TotalManager.sendMessageToConsole("&a地图 &e"+levelName+" &a初始化完成");
             }else{
@@ -113,10 +113,11 @@ public class WorldInfoConfig {
      * 还原地图核心算法
      * @param roomName 房间名称
      * @param levelName 地图名称
+     * @param isInit 是否为初始化状态
      *
      * @return 是否还原成功
      * */
-    public static boolean toPathWorld(String roomName,String levelName){
+    public static boolean toPathWorld(String roomName,String levelName,boolean isInit){
         try {
 
             File nameFile = new File(TotalManager.getDataFolder() + File.separator + "rooms" + File.separator + roomName);
@@ -127,17 +128,20 @@ public class WorldInfoConfig {
             File[] files = world.listFiles();
             File f2 = new File(Server.getInstance().getFilePath() + File.separator + "worlds" + File.separator + levelName);
             if (!f2.exists()) {
-                if(!f2.mkdirs()){
-                    TotalManager.sendMessageToConsole("&c创建地图文件夹失败");
-                }
+                f2.mkdirs();
             }
             if (files != null && files.length > 0) {
-                if(Server.getInstance().isLevelLoaded(levelName)) {
-                    Server.getInstance().unloadLevel(Server.getInstance().getLevelByName(levelName), true);
+                //扔到主线程
+                if(!isInit) {
+                    Server.getInstance().getScheduler().scheduleTask(TotalManager.getPlugin(), () -> {
+                        if (Server.getInstance().isLevelLoaded(levelName)) {
+                            Server.getInstance().unloadLevel(Server.getInstance().getLevelByName(levelName), true);
+                        }
+                    });
                 }
                 Utils.toDelete(f2);
-                if(!f2.exists() && !f2.mkdirs()){
-                    TotalManager.sendMessageToConsole("&c创建地图文件夹失败");
+                if (!f2.exists()) {
+                    f2.mkdirs();
                 }
                 Utils.copyFiles(world, f2);
                 return true;

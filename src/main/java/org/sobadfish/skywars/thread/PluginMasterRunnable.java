@@ -6,13 +6,14 @@ import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.scheduler.AsyncTask;
 import org.sobadfish.skywars.entity.GameFloatText;
 import org.sobadfish.skywars.event.ReloadWorldEvent;
-import org.sobadfish.skywars.manager.*;
+import org.sobadfish.skywars.manager.FloatTextManager;
+import org.sobadfish.skywars.manager.ThreadManager;
+import org.sobadfish.skywars.manager.TotalManager;
+import org.sobadfish.skywars.manager.WorldResetManager;
 import org.sobadfish.skywars.room.GameRoom;
-import org.sobadfish.skywars.room.config.GameRoomConfig;
 import org.sobadfish.skywars.room.config.WorldInfoConfig;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -103,7 +104,7 @@ public class PluginMasterRunnable extends ThreadManager.AbstractBedWarRunnable {
                 public void onRun() {
                     try {
                         for(Map.Entry<String,String> map: WorldResetManager.RESET_QUEUE.entrySet()){
-                            if (WorldInfoConfig.toPathWorld(map.getKey(), map.getValue())) {
+                            if (WorldInfoConfig.toPathWorld(map.getKey(), map.getValue(),false)) {
                                 TotalManager.sendMessageToConsole("&a" + map.getKey() + " 地图已还原");
                             }
                             Server.getInstance().getPluginManager().callEvent(new ReloadWorldEvent(TotalManager.getPlugin(), TotalManager.getRoomManager().getRoomConfig(map.getKey())));
