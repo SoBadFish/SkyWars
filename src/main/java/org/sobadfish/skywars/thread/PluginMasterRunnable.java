@@ -3,7 +3,6 @@ package org.sobadfish.skywars.thread;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
-import cn.nukkit.scheduler.AsyncTask;
 import org.sobadfish.skywars.entity.GameFloatText;
 import org.sobadfish.skywars.event.ReloadWorldEvent;
 import org.sobadfish.skywars.manager.FloatTextManager;
@@ -99,23 +98,20 @@ public class PluginMasterRunnable extends ThreadManager.AbstractBedWarRunnable {
                 }
 
             }
-            Server.getInstance().getScheduler().scheduleAsyncTask(TotalManager.getPlugin(), new AsyncTask() {
-                @Override
-                public void onRun() {
-                    try {
-                        for(Map.Entry<String,String> map: WorldResetManager.RESET_QUEUE.entrySet()){
-                            if (WorldInfoConfig.toPathWorld(map.getKey(), map.getValue(),false)) {
-                                TotalManager.sendMessageToConsole("&a" + map.getKey() + " 地图已还原");
-                            }
-                            Server.getInstance().getPluginManager().callEvent(new ReloadWorldEvent(TotalManager.getPlugin(), TotalManager.getRoomManager().getRoomConfig(map.getKey())));
-
-                        }
-
-                    } catch (Exception e) {
-                        TotalManager.sendMessageToConsole("&c释放房间出现了一个小问题，导致无法正常释放,已将这个房间暂时锁定");
+            try {
+                for(Map.Entry<String,String> map: WorldResetManager.RESET_QUEUE.entrySet()){
+                    if (WorldInfoConfig.toPathWorld(map.getKey(), map.getValue(),false)) {
+                        TotalManager.sendMessageToConsole("&a" + map.getKey() + " 地图已还原");
                     }
+                    Server.getInstance().getPluginManager().callEvent(new ReloadWorldEvent(TotalManager.getPlugin(), TotalManager.getRoomManager().getRoomConfig(map.getKey())));
+
                 }
-            });
+
+            } catch (Exception e) {
+                TotalManager.sendMessageToConsole("&c释放房间出现了一个小问题，导致无法正常释放,已将这个房间暂时锁定");
+            }
+
+
 
 
 

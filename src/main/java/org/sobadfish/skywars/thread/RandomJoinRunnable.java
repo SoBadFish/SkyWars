@@ -52,6 +52,7 @@ public class RandomJoinRunnable extends ThreadManager.AbstractBedWarRunnable {
                     RandomJoinManager.newInstance().playerInfos.remove(info);
                     continue;
                 }
+                info.getPlayerInfo().sendSubTitle(PlayerInfo.formatTime((int)((System.currentTimeMillis() - info.time.getTime()) / 1000f)));
                 if(!joinRandomRoom(info)){
                     if(info.isNext){
                         if(info.getPlayerInfo().getPlayer() instanceof Player) {
@@ -84,6 +85,7 @@ public class RandomJoinRunnable extends ThreadManager.AbstractBedWarRunnable {
             lock.add(roomManager);
         }
         if(roomManager.cancel){
+            info.sendForceTitle("匹配终止!");
             return true;
         }
         info.sendForceTitle("&6匹配中",100);
@@ -104,6 +106,7 @@ public class RandomJoinRunnable extends ThreadManager.AbstractBedWarRunnable {
         }
         if(System.currentTimeMillis() -  i.time.getTime() > 60 * 1000){
             //一分钟未找到
+            info.sendForceTitle("匹配终止!");
             info.sendForceMessage("&c暂时没有合适的房间");
             roomManager.cancel = true;
             return true;
