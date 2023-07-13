@@ -6,6 +6,7 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.manager.data.PlayerDataManager;
 import org.sobadfish.skywars.manager.data.PlayerTopManager;
+import org.sobadfish.skywars.manager.data.TagItemDataManager;
 import org.sobadfish.skywars.room.config.GameRoomConfig;
 import org.sobadfish.skywars.variable.GameNpcVariable;
 import org.sobadfish.skywars.variable.GameTipVariable;
@@ -48,6 +49,8 @@ public class TotalManager {
 
 
     private static PlayerDataManager dataManager;
+
+    private static TagItemDataManager tagItemDataManager;
 
     private static PlayerTopManager topManager;
 
@@ -94,6 +97,10 @@ public class TotalManager {
         return plugin.getConfig();
     }
 
+    public static TagItemDataManager getTagItemDataManager() {
+        return tagItemDataManager;
+    }
+
     public static void sendMessageToConsole(String msg){
         sendMessageToObject(msg,null);
     }
@@ -132,6 +139,7 @@ public class TotalManager {
         upExp = getConfig().getInt("up-exp",500);
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
+        tagItemDataManager = TagItemDataManager.asFile(new File(plugin.getDataFolder()+File.separator+"tag.json"));
         File mainFileDir = new File(plugin.getDataFolder()+File.separator+"rooms");
         if(!mainFileDir.exists()){
             if(!mainFileDir.mkdirs()){

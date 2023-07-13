@@ -4,7 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.item.Item;
 import cn.nukkit.utils.TextFormat;
+import org.sobadfish.skywars.item.tag.TagItem;
 import org.sobadfish.skywars.manager.ThreadManager;
 import org.sobadfish.skywars.manager.TotalManager;
 import org.sobadfish.skywars.player.PlayerData;
@@ -96,6 +98,7 @@ public class GameAdminCommand extends Command {
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" see 查看所有加载的房间");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" close [名称] 关闭房间");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" exp [玩家] [数量] <由来> 增加玩家经验");
+            commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" si [名称] 将手持的物品保存到配置文件中");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" status 查看线程状态");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" end 停止模板预设");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" float add/remove [房间名称] [名称] [文本] 在脚下设置浮空字/删除浮空字");
@@ -239,6 +242,7 @@ public class GameAdminCommand extends Command {
                     return false;
                 }
                 break;
+
             case "float":
                 if(strings.length < 4){
 
@@ -277,6 +281,35 @@ public class GameAdminCommand extends Command {
                     return false;
                 }
 
+                break;
+            case "si":
+                if(commandSender instanceof Player) {
+                    if (strings.length > 1) {
+                        String name = strings[1];
+                        if("".equalsIgnoreCase(name)) {
+                            commandSender.sendMessage("指令参数错误 执行/"+TotalManager.COMMAND_ADMIN_NAME+" help 查看帮助");
+                            return false;
+                        }
+                        if (TotalManager.getTagItemDataManager().hasItem(name)) {
+                            commandSender.sendMessage( "&c存在名称为 &a"+name+" &c的物品了");
+                            return true;
+                        }
+                        Item item = ((Player) commandSender).getInventory().getItemInHand();
+                        if(item.getId() == 0){
+                            commandSender.sendMessage("&c你不能保存空气！");
+                            return true;
+                        }
+                        TotalManager.getTagItemDataManager().dataList.add(new TagItem(name,item));
+                        TotalManager.getTagItemDataManager().save();
+                        commandSender.sendMessage("&a成功保存名称为 &e"+name+" &a的物品");
+                    } else {
+                        commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" help 查看指令帮助");
+                        return false;
+                    }
+                }else{
+                    commandSender.sendMessage("请不要在控制台执行");
+                    return false;
+                }
                 break;
             case "status":
                 TotalManager.sendMessageToObject("&6定时任务: &a"+ ThreadManager.getScheduledSize(),commandSender);

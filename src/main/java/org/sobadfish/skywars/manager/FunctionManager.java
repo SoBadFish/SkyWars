@@ -3,6 +3,7 @@ package org.sobadfish.skywars.manager;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.TextFormat;
+import org.sobadfish.skywars.manager.data.TagItemDataManager;
 import org.sobadfish.skywars.room.config.ItemConfig;
 
 import java.util.*;
@@ -201,15 +202,34 @@ public class FunctionManager {
 
     public static Item stringToItem(String s){
         String[] sList = s.split(":");
-        Item item = Item.get(Integer.parseInt(sList[0]));
-        if(sList.length > 1){
-            item.setDamage(Integer.parseInt(sList[1]));
-            if(sList.length > 2){
-                item.setCount(Integer.parseInt(sList[2]));
-            }else{
-                item.setCount(1);
+        //tag物品截胡检测一下
+        Item item = Item.get(0);
+        TagItemDataManager itemDataManager = TotalManager.getTagItemDataManager();
+        if(itemDataManager.hasItem(sList[0])){
+            item = itemDataManager.getItem(sList[0]);
+            int count = 1;
+            if(sList.length > 1){
+                count = Integer.parseInt(sList[1]);
+            }
+            item.setCount(count);
+        }
+
+        if(item.getId() == 0){
+            try {
+                item = Item.get(Integer.parseInt(sList[0]));
+            }catch (Exception e){
+                item = Item.fromString(sList[0].replace(".",":"));
+            }
+            if(sList.length > 1){
+                item.setDamage(Integer.parseInt(sList[1]));
+                if(sList.length > 2){
+                    item.setCount(Integer.parseInt(sList[2]));
+                }else{
+                    item.setCount(1);
+                }
             }
         }
+
         return item;
 
     }
