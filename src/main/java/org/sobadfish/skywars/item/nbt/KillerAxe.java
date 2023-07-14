@@ -11,6 +11,8 @@ import org.sobadfish.skywars.manager.NbtItemManager;
  * @date 2023/7/14
  */
 public class KillerAxe implements INbtItem{
+
+
     @Override
     public String getName() {
         return "秒人斧";

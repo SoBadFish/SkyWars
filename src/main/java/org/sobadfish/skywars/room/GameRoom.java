@@ -18,10 +18,7 @@ import org.sobadfish.skywars.event.PlayerQuitRoomEvent;
 import org.sobadfish.skywars.item.button.FollowItem;
 import org.sobadfish.skywars.item.button.RoomQuitItem;
 import org.sobadfish.skywars.item.button.TeamChoseItem;
-import org.sobadfish.skywars.manager.RandomJoinManager;
-import org.sobadfish.skywars.manager.RoomManager;
-import org.sobadfish.skywars.manager.TotalManager;
-import org.sobadfish.skywars.manager.WorldResetManager;
+import org.sobadfish.skywars.manager.*;
 import org.sobadfish.skywars.player.PlayerInfo;
 import org.sobadfish.skywars.player.team.TeamInfo;
 import org.sobadfish.skywars.player.team.config.TeamInfoConfig;
@@ -62,6 +59,8 @@ public class GameRoom {
     private boolean hasStart;
 
     public int loadTime = -1;
+
+    public List<String> limitItemName = new ArrayList<>();
 
 
 
@@ -818,7 +817,15 @@ public class GameRoom {
             if(list.size() > 0) {
                 for (int i = 0; i < size; i++) {
                     if (Utils.rand(0, 100) <= getRoomConfig().getRound()) {
-                        itemLinkedHashMap.put(i, list.get(new Random().nextInt(list.size())));
+                        Item item = list.get(new Random().nextInt(list.size()));
+                        if(item.hasCompoundTag() && "秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))){
+                            if(!limitItemName.contains("秒人斧")){
+                                limitItemName.add("秒人斧");
+                            }else{
+                                continue;
+                            }
+                        }
+                        itemLinkedHashMap.put(i, item);
                     }
                 }
                 worldInfo.clickChest(block);
