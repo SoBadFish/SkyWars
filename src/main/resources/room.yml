@@ -15,6 +15,11 @@ AutomaticNextRound: true
 victoryCmd: []
 defeatCmd: []
 resetTime: 120
+# TNT的伤害
+tntDamage: 8
+
+# TNT爆炸时间（秒）
+tntExplodeTime: 5
 floatSpawnPos: []
 ban-break:
   - "7"

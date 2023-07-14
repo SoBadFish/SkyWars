@@ -39,6 +39,8 @@ public class PlayerInfo {
 
     public EntityHuman player;
 
+    public boolean isSpawnFire;
+
     private PlayerType playerType;
 
     private GameRoom gameRoom;

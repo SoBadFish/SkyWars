@@ -213,6 +213,15 @@ public class FunctionManager {
             }
             item.setCount(count);
         }
+        //TODO 特殊物品检测
+        if(NbtItemManager.NBT_MANAGER.containsKey(sList[0])){
+            item = NbtItemManager.NBT_MANAGER.get(sList[0]).getItem();
+            int count = 1;
+            if(sList.length > 1){
+                count = Integer.parseInt(sList[1]);
+            }
+            item.setCount(count);
+        }
 
         if(item.getId() == 0){
             try {

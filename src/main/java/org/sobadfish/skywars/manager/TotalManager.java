@@ -64,6 +64,7 @@ public class TotalManager {
         loadConfig();
         loadVariable();
         ThreadManager.init();
+        NbtItemManager.init();
     }
 
     private static void loadVariable() {

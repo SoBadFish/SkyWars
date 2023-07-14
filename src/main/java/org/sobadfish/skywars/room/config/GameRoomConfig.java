@@ -144,6 +144,16 @@ public class GameRoomConfig {
      * */
     public int resetTime = 0;
 
+    /**
+     * TNT伤害
+     * */
+    public int tntDamage = 8;
+
+    /**
+     * TNT爆炸时间
+     * */
+    public int tntExplodeTime = 5;
+
 
 
 
@@ -256,6 +266,8 @@ public class GameRoomConfig {
                 roomConfig.deathDrop = room.getBoolean("deathDrop",true);
                 roomConfig.canBreak = new ArrayList<>(room.getStringList("can-break"));
                 roomConfig.banBreak = new ArrayList<>(room.getStringList("ban-break"));
+                roomConfig.tntDamage = room.getInt("tntDamage",8);
+                roomConfig.tntExplodeTime = room.getInt("tntExplodeTime",5);
 
                 roomConfig.resetTime = room.getInt("resetTime",120);
                 //TODO 如果小游戏需要使用箱子内随机刷新物品 就解开这个配置
