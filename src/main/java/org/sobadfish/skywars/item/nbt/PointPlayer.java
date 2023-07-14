@@ -2,6 +2,8 @@ package org.sobadfish.skywars.item.nbt;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.TextFormat;
+import org.sobadfish.skywars.manager.NbtItemManager;
 import org.sobadfish.skywars.manager.TotalManager;
 import org.sobadfish.skywars.player.PlayerInfo;
 import org.sobadfish.skywars.room.GameRoom;
@@ -55,7 +57,11 @@ public class PointPlayer implements INbtItem{
 
     @Override
     public Item getItem() {
-        return null;
+        Item item = Item.get(345);
+        item.setCustomName(TextFormat.colorize('&',"&r&l&a指南针"));
+
+        return NbtItemManager.asNbtItem(item,getName());
+
     }
 
 

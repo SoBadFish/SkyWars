@@ -7,6 +7,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import org.sobadfish.skywars.item.nbt.FireBall;
 import org.sobadfish.skywars.item.nbt.INbtItem;
 import org.sobadfish.skywars.item.nbt.KillerAxe;
+import org.sobadfish.skywars.item.nbt.PointPlayer;
 
 
 import java.util.LinkedHashMap;
@@ -26,6 +27,7 @@ public class NbtItemManager {
 
         NBT_MANAGER.put("火球",new FireBall());
         NBT_MANAGER.put("秒人斧",new KillerAxe());
+        NBT_MANAGER.put("指南针",new PointPlayer());
 
     }
 
