@@ -557,10 +557,9 @@ public class RoomManager implements Listener {
                             Item hand = ((EntityHuman) entity).getInventory().getItemInHand();
                             if(hand.hasCompoundTag() && "秒人斧".equalsIgnoreCase(hand.getNamedTag().getString(NbtItemManager.TAG))){
                                 //秒杀
-                                event.setCancelled();
-                                hand.useOn(event.getEntity());
                                 playerInfo.death(event);
-
+                                event.setDamage(0f);
+                                return;
                             }
                         }
                     }
