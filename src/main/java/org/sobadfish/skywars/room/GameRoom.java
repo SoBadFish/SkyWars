@@ -6,9 +6,12 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.potion.Effect;
 import de.theamychan.scoreboard.network.Scoreboard;
 import org.sobadfish.skywars.event.GameCloseEvent;
@@ -818,13 +821,28 @@ public class GameRoom {
                 for (int i = 0; i < size; i++) {
                     if (Utils.rand(0, 100) <= getRoomConfig().getRound()) {
                         Item item = list.get(new Random().nextInt(list.size()));
-                        if(item.hasCompoundTag() && "秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))){
-                            if(!limitItemName.contains("秒人斧")){
-                                limitItemName.add("秒人斧");
-                            }else{
-                                continue;
+                        if(item.hasCompoundTag() ){
+                            if("秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))){
+                                if(!limitItemName.contains("秒人斧")){
+                                    limitItemName.add("秒人斧");
+                                }else{
+                                    continue;
+                                }
                             }
+                            if(item.getNamedTag().contains("ROUND_ENCHANT")){
+                                ListTag<StringTag> ls = item.getNamedTag().getList("ROUND_ENCHANT",StringTag.class);
+                                for(StringTag st: ls.getAll()){
+                                    String[] sdl = st.parseValue().split("~");
+                                    int level = Utils.rand(Integer.parseInt(sdl[0]),Integer.parseInt(sdl[1]));
+                                    if(level > 0){
+                                        item.addEnchantment(Enchantment.getEnchantment(Integer.parseInt(st.getName())).setLevel(level));
+                                    }
+
+                                }
+                            }
+
                         }
+
                         itemLinkedHashMap.put(i, item);
                     }
                 }
