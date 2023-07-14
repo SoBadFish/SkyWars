@@ -61,10 +61,11 @@ public class TotalManager {
         TotalManager.plugin = pluginBase;
 
         checkServer();
+        NbtItemManager.init();
         loadConfig();
         loadVariable();
         ThreadManager.init();
-        NbtItemManager.init();
+
     }
 
     private static void loadVariable() {
