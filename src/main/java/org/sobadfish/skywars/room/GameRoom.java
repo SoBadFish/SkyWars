@@ -10,6 +10,7 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.potion.Effect;
@@ -840,6 +841,9 @@ public class GameRoom {
                                     }
 
                                 }
+                                CompoundTag compoundTag = item.getNamedTag();
+                                compoundTag.remove("ROUND_ENCHANT");
+                                item.setNamedTag(compoundTag);
                             }
 
                         }
