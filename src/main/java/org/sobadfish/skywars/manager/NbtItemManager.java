@@ -37,6 +37,7 @@ public class NbtItemManager {
             tag = new CompoundTag();
         }
         tag.putString(TAG,name);
+        item.setNamedTag(tag);
         return item;
     }
 
