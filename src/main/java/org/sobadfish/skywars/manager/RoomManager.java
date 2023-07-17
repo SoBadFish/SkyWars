@@ -16,10 +16,7 @@ import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityExplodeEvent;
-import cn.nukkit.event.entity.EntityLevelChangeEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.event.level.WeatherChangeEvent;
@@ -516,7 +513,7 @@ public class RoomManager implements Listener {
                     //TODO 免受TNT爆炸伤害
                     Entity entity = ((EntityDamageByEntityEvent) event).getDamager();
                     if (entity instanceof EntityPrimedTNT) {
-                        event.setDamage(2);
+                        event.setDamage(room.roomConfig.tntDamage);
                     }
                     //TODO 减免火球伤害
                     if(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION){
@@ -552,17 +549,7 @@ public class RoomManager implements Listener {
                             event.setCancelled();
                         }
                     }
-                    if(entity instanceof EntityHuman){
-                        if(entity.distance(event.getEntity()) < 3 && !event.isCancelled()){
-                            Item hand = ((EntityHuman) entity).getInventory().getItemInHand();
-                            if(hand.hasCompoundTag() && "秒人斧".equalsIgnoreCase(hand.getNamedTag().getString(NbtItemManager.TAG))){
-                                //秒杀
-                                playerInfo.death(event);
-                                event.setDamage(0f);
-                                return;
-                            }
-                        }
-                    }
+
 
                 }
                 if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
@@ -620,6 +607,31 @@ public class RoomManager implements Listener {
                         info.setLeave(true);
                     }
                 }
+            }
+        }
+    }
+
+
+    /**
+     * 使用这个算法记录玩家攻击的实体以及手持的武器
+     * */
+    @EventHandler
+    public void onEntityInteractEntity(PlayerInteractEntityEvent event){
+        Player player = event.getPlayer();
+        PlayerInfo playerInfo = getPlayerInfo(player);
+        Item item = event.getItem();
+        if(item.hasCompoundTag() && "秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))) {
+            if (playerInfo != null) {
+                Entity entity = event.getEntity();
+                if (entity instanceof EntityHuman) {
+                    PlayerInfo entityInfo = getPlayerInfo((EntityHuman) entity);
+                    if (entityInfo != null) {
+                        player.getInventory().removeItem(item);
+                        playerInfo.death(new EntityDamageByEntityEvent(player,entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK,0.5f));
+                    }
+
+                }
+
             }
         }
     }
