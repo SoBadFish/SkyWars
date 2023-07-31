@@ -626,7 +626,6 @@ public class RoomManager implements Listener {
                 if (entity instanceof EntityHuman) {
                     PlayerInfo entityInfo = getPlayerInfo((EntityHuman) entity);
                     if (entityInfo != null) {
-                        player.getInventory().removeItem(item);
                         playerInfo.death(new EntityDamageByEntityEvent(player,entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK,0.5f));
                     }
 
@@ -1026,7 +1025,9 @@ public class RoomManager implements Listener {
 
         final GameRoom room = event.getRoom();
         for (PlayerInfo info:event.getTeamInfo().getDefeatPlayers()) {
-
+            PlayerData data = TotalManager.getDataManager().getData(info.getName());
+            data.getRoomData(event.getRoom().getRoomConfig().name).defeatCount++;
+            data.getRoomData(event.getRoom().getRoomConfig().name).gameCount++;
             room.getRoomConfig().defeatCommand.forEach(cmd->Server.getInstance().dispatchCommand(new ConsoleCommandSender(),cmd.replace("@p",info.getName())));
             if(event.getRoom().getRoomConfig().isAutomaticNextRound){
                 info.sendMessage("&7即将自动进行下一局");
@@ -1063,6 +1064,9 @@ public class RoomManager implements Listener {
         event.getRoom().sendTipMessage(FunctionManager.getCentontString("&b游戏结束",line.length()));
         event.getRoom().sendTipMessage("");
         for(PlayerInfo playerInfo: event.getTeamInfo().getVictoryPlayers()){
+            PlayerData data = TotalManager.getDataManager().getData(playerInfo.getName());
+            data.getRoomData(event.getRoom().getRoomConfig().name).victoryCount++;
+            data.getRoomData(event.getRoom().getRoomConfig().name).gameCount++;
             event.getRoom().sendTipMessage(FunctionManager.getCentontString("&7   "+playerInfo.getPlayer().getName()+" 击杀："+(playerInfo.getKillCount())+" 助攻: "+playerInfo.getAssists(),line.length()));
             event.getRoom().getRoomConfig().victoryCommand.forEach(cmd->Server.getInstance().dispatchCommand(new ConsoleCommandSender(),cmd.replace("@p",playerInfo.getName())));
         }
