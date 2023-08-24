@@ -16,9 +16,13 @@ import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
-import cn.nukkit.event.entity.*;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityExplodeEvent;
+import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
+import cn.nukkit.event.level.ChunkUnloadEvent;
 import cn.nukkit.event.level.WeatherChangeEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.form.element.ElementButton;
@@ -42,6 +46,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.entity.DamageFloatTextEntity;
 import org.sobadfish.skywars.entity.EntityTnt;
+import org.sobadfish.skywars.entity.GameFloatText;
 import org.sobadfish.skywars.event.*;
 import org.sobadfish.skywars.item.ItemIDSunName;
 import org.sobadfish.skywars.item.button.RoomQuitItem;
@@ -219,6 +224,21 @@ public class RoomManager implements Listener {
             return false;
         }
 
+    }
+
+    /**
+     * 阻止区块卸载 如果区块卸载会出现如下问题
+     *
+     * 1. 还原房间部分方块无法还原
+     * 2. 导致后台循环报错空指针异常
+     * */
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event){
+        for(Entity entity: event.getChunk().getEntities().values()){
+            if(entity instanceof GameFloatText){
+                event.setCancelled();
+            }
+        }
     }
 
     public GameRoomConfig getRoomConfig(String name){
