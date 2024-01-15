@@ -544,7 +544,7 @@ public class RoomManager implements Listener {
                     }
 
 
-                    if (entity instanceof Player) {
+                    if (entity instanceof EntityHuman) {
                         PlayerInfo damageInfo = room.getPlayerInfo((Player) entity);
                         if (damageInfo != null) {
                             if (damageInfo.isWatch()) {
@@ -567,9 +567,16 @@ public class RoomManager implements Listener {
                             playerInfo.setDamageByInfo(damageInfo);
                         } else {
                             event.setCancelled();
+                            return;
+                        }
+                        Item item = ((EntityHuman) entity).getInventory().getItemInHand();
+                        if(item.hasCompoundTag() && "秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))) {
+                           if(playerInfo.player.distance(entity) < 2){
+                               //TODO 秒杀
+                               playerInfo.death(new EntityDamageByEntityEvent(playerInfo.player,entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK,0.5f));
+                           }
                         }
                     }
-
 
                 }
                 if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
@@ -632,28 +639,28 @@ public class RoomManager implements Listener {
     }
 
 
-    /**
-     * 使用这个算法记录玩家攻击的实体以及手持的武器
-     * */
-    @EventHandler
-    public void onEntityInteractEntity(PlayerInteractEntityEvent event){
-        Player player = event.getPlayer();
-        PlayerInfo playerInfo = getPlayerInfo(player);
-        Item item = event.getItem();
-        if(item.hasCompoundTag() && "秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))) {
-            if (playerInfo != null) {
-                Entity entity = event.getEntity();
-                if (entity instanceof EntityHuman) {
-                    PlayerInfo entityInfo = getPlayerInfo((EntityHuman) entity);
-                    if (entityInfo != null) {
-                        playerInfo.death(new EntityDamageByEntityEvent(player,entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK,0.5f));
-                    }
-
-                }
-
-            }
-        }
-    }
+//    /**
+//     * 使用这个算法记录玩家攻击的实体以及手持的武器
+//     * */
+//    @EventHandler
+//    public void onEntityInteractEntity(PlayerInteractEntityEvent event){
+//        Player player = event.getPlayer();
+//        PlayerInfo playerInfo = getPlayerInfo(player);
+//        Item item = event.getItem();
+//        if(item.hasCompoundTag() && "秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))) {
+//            if (playerInfo != null) {
+//                Entity entity = event.getEntity();
+//                if (entity instanceof EntityHuman) {
+//                    PlayerInfo entityInfo = getPlayerInfo((EntityHuman) entity);
+//                    if (entityInfo != null) {
+//                        playerInfo.death(new EntityDamageByEntityEvent(player,entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK,0.5f));
+//                    }
+//
+//                }
+//
+//            }
+//        }
+//    }
 
 
     @EventHandler
