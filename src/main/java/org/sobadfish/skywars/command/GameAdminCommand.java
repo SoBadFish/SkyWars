@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.item.tag.TagItem;
@@ -31,10 +33,67 @@ import java.util.LinkedHashMap;
  * @date 2022/9/12
  */
 public class GameAdminCommand extends Command {
+
     public GameAdminCommand(String name) {
         super(name);
         this.usageMessage = "/"+TotalManager.COMMAND_ADMIN_NAME+" help 查看指令帮助";
         this.setPermission("op");
+
+        this.commandParameters.clear();
+        this.commandParameters.put("help", new CommandParameter[] {
+                CommandParameter.newEnum("help", new String[]{"help"})
+        });
+        this.commandParameters.put("reload", new CommandParameter[] {
+                CommandParameter.newEnum("reload", new String[]{"reload"})
+        });
+        this.commandParameters.put("set", new CommandParameter[] {
+                CommandParameter.newEnum("set", new String[]{"set"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT)
+        });
+        this.commandParameters.put("tsl", new CommandParameter[] {
+                CommandParameter.newEnum("tsl", new String[]{"tsl"})
+        });
+        this.commandParameters.put("see", new CommandParameter[] {
+                CommandParameter.newEnum("see", new String[]{"see"})
+        });
+        this.commandParameters.put("close", new CommandParameter[] {
+                CommandParameter.newEnum("close", new String[]{"close"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT)
+        });
+        this.commandParameters.put("exp", new CommandParameter[] {
+                CommandParameter.newEnum("exp", new String[]{"exp"}),
+                CommandParameter.newType("玩家", CommandParamType.TEXT),
+                CommandParameter.newType("数量", CommandParamType.INT),
+                CommandParameter.newType("由来", true, CommandParamType.TEXT)
+
+        });
+        this.commandParameters.put("si", new CommandParameter[] {
+                CommandParameter.newEnum("si", new String[]{"si"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT)
+        });
+        this.commandParameters.put("status", new CommandParameter[] {
+                CommandParameter.newEnum("status", new String[]{"status"})
+        });
+        this.commandParameters.put("end", new CommandParameter[] {
+                CommandParameter.newEnum("end", new String[]{"end"})
+        });
+        this.commandParameters.put("float", new CommandParameter[] {
+                CommandParameter.newEnum("float", new String[]{"float"}),
+                CommandParameter.newEnum("添加/删除", new String[]{"add","remove"}),
+                CommandParameter.newType("房间名称", CommandParamType.TEXT),
+                CommandParameter.newType("名称", CommandParamType.TEXT),
+                CommandParameter.newType("文本", true, CommandParamType.TEXT)
+        });
+        this.commandParameters.put("cancel", new CommandParameter[] {
+                CommandParameter.newEnum("cancel", new String[]{"cancel"})
+        });
+        this.commandParameters.put("top", new CommandParameter[] {
+                CommandParameter.newEnum("top", new String[]{"top"}),
+                CommandParameter.newEnum("添加/删除", new String[]{"add","remove"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT),
+                CommandParameter.newType("类型", CommandParamType.TEXT),
+                CommandParameter.newType("房间", true, CommandParamType.TEXT)
+        });
     }
 
     /**
