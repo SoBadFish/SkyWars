@@ -4,10 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
+import lombok.Getter;
 import org.sobadfish.skywars.manager.data.PlayerDataManager;
 import org.sobadfish.skywars.manager.data.PlayerTopManager;
 import org.sobadfish.skywars.manager.data.TagItemDataManager;
 import org.sobadfish.skywars.room.config.GameRoomConfig;
+import org.sobadfish.skywars.tools.ConfigUpdateUtils;
 import org.sobadfish.skywars.variable.GameNpcVariable;
 import org.sobadfish.skywars.variable.GameTipVariable;
 
@@ -54,6 +56,10 @@ public class TotalManager {
 
     private static PlayerTopManager topManager;
 
+    @Getter
+    private static RecordManager recordManager;
+
+    public static boolean enableRecord;
 
     public static int upExp;
 
@@ -66,6 +72,7 @@ public class TotalManager {
         loadVariable();
         ThreadManager.init();
 
+        recordManager = new RecordManager();
     }
 
     private static void loadVariable() {
@@ -138,6 +145,9 @@ public class TotalManager {
         if(plugin == null){
             return;
         }
+
+        ConfigUpdateUtils.updateConfig(getConfig());
+
         upExp = getConfig().getInt("up-exp",500);
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
@@ -164,6 +174,15 @@ public class TotalManager {
             topManager.init();
         }
 
+        enableRecord = getConfig().getBoolean("enable-Record",false);
+        if (enableRecord) {
+            try {
+                Class.forName("net.easecation.ghosty.GhostyPlugin");
+            } catch (Exception e) {
+                sendMessageToConsole("&c未找到Ghosty插件，录像功能已关闭");
+                enableRecord = false;
+            }
+        }
     }
     public static PlayerDataManager getDataManager() {
         return dataManager;
@@ -266,14 +285,17 @@ public class TotalManager {
         } catch (ClassNotFoundException | NoSuchFieldException ignore) { }
         try {
             Class<?> c = Class.forName("cn.nukkit.Nukkit");
-            c.getField("NUKKIT").get(c).toString().equalsIgnoreCase("Nukkit PetteriM1 Edition");
-            ver = true;
+            String string = c.getField("NUKKIT").get(c).toString();
+
+            if (string.equalsIgnoreCase("Nukkit PetteriM1 Edition") || string.equalsIgnoreCase("Nukkit MOT")) {
+                ver = true;
+            }
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException ignore) {
         }
 
         IS_PM1E = ver;
         if(ver){
-            sendMessageToConsole("&e当前核心为 Nukkit PM1E");
+            sendMessageToConsole("&e当前核心为 Nukkit PM1E 或 Nukkit MOT");
         }else{
             sendMessageToConsole("&e当前核心为 Nukkit");
         }

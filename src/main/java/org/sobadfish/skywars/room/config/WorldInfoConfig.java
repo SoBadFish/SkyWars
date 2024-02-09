@@ -118,6 +118,10 @@ public class WorldInfoConfig {
      * @return 是否还原成功
      * */
     public static boolean toPathWorld(String roomName,String levelName,boolean isInit){
+        return toPathWorld(roomName,levelName,levelName,isInit);
+    }
+
+    public static boolean toPathWorld(String roomName,String levelName,String targetLevelName, boolean isInit){
         try {
 
             File nameFile = new File(TotalManager.getDataFolder() + File.separator + "rooms" + File.separator + roomName);
@@ -126,7 +130,7 @@ public class WorldInfoConfig {
             }
             File world = new File(nameFile + File.separator + "world" + File.separator + levelName);
             File[] files = world.listFiles();
-            File f2 = new File(Server.getInstance().getFilePath() + File.separator + "worlds" + File.separator + levelName);
+            File f2 = new File(Server.getInstance().getFilePath() + File.separator + "worlds" + File.separator + targetLevelName);
             if (!f2.exists()) {
                 f2.mkdirs();
             }
@@ -134,9 +138,9 @@ public class WorldInfoConfig {
                 //扔到主线程
                 if(!isInit) {
 //                    Server.getInstance().getScheduler().scheduleTask(TotalManager.getPlugin(), () -> {
-                        if (Server.getInstance().isLevelLoaded(levelName)) {
-                            Server.getInstance().unloadLevel(Server.getInstance().getLevelByName(levelName), true);
-                        }
+                    if (Server.getInstance().isLevelLoaded(levelName)) {
+                        Server.getInstance().unloadLevel(Server.getInstance().getLevelByName(levelName), true);
+                    }
 //                    });
                 }
                 Utils.toDelete(f2);

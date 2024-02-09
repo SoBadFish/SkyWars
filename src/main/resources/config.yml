@@ -5,6 +5,8 @@ scoreboard-title: "&a空岛战争"
 # 是否保存玩家背包
 save-playerInventory:  true
 
+# 是否启用房间录制和回放
+enable-Record: true
 
 
 game-logo: "author: sobadfish "

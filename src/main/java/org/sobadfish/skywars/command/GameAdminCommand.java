@@ -11,6 +11,7 @@ import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.item.tag.TagItem;
 import org.sobadfish.skywars.manager.ThreadManager;
 import org.sobadfish.skywars.manager.TotalManager;
+import org.sobadfish.skywars.panel.RecordPanel;
 import org.sobadfish.skywars.player.PlayerData;
 import org.sobadfish.skywars.player.PlayerInfo;
 import org.sobadfish.skywars.room.GameRoom;
@@ -94,6 +95,9 @@ public class GameAdminCommand extends Command {
                 CommandParameter.newType("类型", CommandParamType.TEXT),
                 CommandParameter.newType("房间", true, CommandParamType.TEXT)
         });
+        this.commandParameters.put("record", new CommandParameter[] {
+                CommandParameter.newEnum("record", new String[]{"record"})
+        });
     }
 
     /**
@@ -163,6 +167,9 @@ public class GameAdminCommand extends Command {
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" float add/remove [房间名称] [名称] [文本] 在脚下设置浮空字/删除浮空字");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" cancel 终止房间创建");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" top add/remove [名称] [类型] [房间(可不填)] 创建/删除排行榜");
+            if (TotalManager.enableRecord) {
+                commandSender.sendMessage("/" + TotalManager.COMMAND_ADMIN_NAME + " record 管理录像");
+            }
             StringBuilder v = new StringBuilder("类型: ");
             for(PlayerData.DataType type: PlayerData.DataType.values()){
                 v.append(type.getName()).append(" , ");
@@ -416,6 +423,17 @@ public class GameAdminCommand extends Command {
                 TotalManager.sendMessageToObject("成功终止房间的创建，残留文件将在重启服务器后自动删除", commandSender);
                 // commandSender.sendMessage(TextFormat.colorize('&', "&d"));
 
+                break;
+            case "record":
+                if (TotalManager.enableRecord) {
+                    if (commandSender instanceof Player) {
+                        RecordPanel.disPlayerMenu((Player) commandSender);
+                    } else {
+                        commandSender.sendMessage("请不要在控制台执行");
+                    }
+                } else {
+                    commandSender.sendMessage("未启用录像功能");
+                }
                 break;
 
             default:break;
