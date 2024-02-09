@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.TextFormat;
-import javafx.geometry.Pos;
 import org.sobadfish.skywars.event.PlayerChoseTeamEvent;
 import org.sobadfish.skywars.event.TeamDefeatEvent;
 import org.sobadfish.skywars.event.TeamVictoryEvent;

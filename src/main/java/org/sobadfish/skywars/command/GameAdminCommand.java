@@ -4,11 +4,14 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.TextFormat;
 import org.sobadfish.skywars.item.tag.TagItem;
 import org.sobadfish.skywars.manager.ThreadManager;
 import org.sobadfish.skywars.manager.TotalManager;
+import org.sobadfish.skywars.panel.RecordPanel;
 import org.sobadfish.skywars.player.PlayerData;
 import org.sobadfish.skywars.player.PlayerInfo;
 import org.sobadfish.skywars.room.GameRoom;
@@ -31,10 +34,70 @@ import java.util.LinkedHashMap;
  * @date 2022/9/12
  */
 public class GameAdminCommand extends Command {
+
     public GameAdminCommand(String name) {
         super(name);
         this.usageMessage = "/"+TotalManager.COMMAND_ADMIN_NAME+" help 查看指令帮助";
         this.setPermission("op");
+
+        this.commandParameters.clear();
+        this.commandParameters.put("help", new CommandParameter[] {
+                CommandParameter.newEnum("help", new String[]{"help"})
+        });
+        this.commandParameters.put("reload", new CommandParameter[] {
+                CommandParameter.newEnum("reload", new String[]{"reload"})
+        });
+        this.commandParameters.put("set", new CommandParameter[] {
+                CommandParameter.newEnum("set", new String[]{"set"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT)
+        });
+        this.commandParameters.put("tsl", new CommandParameter[] {
+                CommandParameter.newEnum("tsl", new String[]{"tsl"})
+        });
+        this.commandParameters.put("see", new CommandParameter[] {
+                CommandParameter.newEnum("see", new String[]{"see"})
+        });
+        this.commandParameters.put("close", new CommandParameter[] {
+                CommandParameter.newEnum("close", new String[]{"close"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT)
+        });
+        this.commandParameters.put("exp", new CommandParameter[] {
+                CommandParameter.newEnum("exp", new String[]{"exp"}),
+                CommandParameter.newType("玩家", CommandParamType.TEXT),
+                CommandParameter.newType("数量", CommandParamType.INT),
+                CommandParameter.newType("由来", true, CommandParamType.TEXT)
+
+        });
+        this.commandParameters.put("si", new CommandParameter[] {
+                CommandParameter.newEnum("si", new String[]{"si"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT)
+        });
+        this.commandParameters.put("status", new CommandParameter[] {
+                CommandParameter.newEnum("status", new String[]{"status"})
+        });
+        this.commandParameters.put("end", new CommandParameter[] {
+                CommandParameter.newEnum("end", new String[]{"end"})
+        });
+        this.commandParameters.put("float", new CommandParameter[] {
+                CommandParameter.newEnum("float", new String[]{"float"}),
+                CommandParameter.newEnum("添加/删除", new String[]{"add","remove"}),
+                CommandParameter.newType("房间名称", CommandParamType.TEXT),
+                CommandParameter.newType("名称", CommandParamType.TEXT),
+                CommandParameter.newType("文本", true, CommandParamType.TEXT)
+        });
+        this.commandParameters.put("cancel", new CommandParameter[] {
+                CommandParameter.newEnum("cancel", new String[]{"cancel"})
+        });
+        this.commandParameters.put("top", new CommandParameter[] {
+                CommandParameter.newEnum("top", new String[]{"top"}),
+                CommandParameter.newEnum("添加/删除", new String[]{"add","remove"}),
+                CommandParameter.newType("名称", CommandParamType.TEXT),
+                CommandParameter.newType("类型", CommandParamType.TEXT),
+                CommandParameter.newType("房间", true, CommandParamType.TEXT)
+        });
+        this.commandParameters.put("record", new CommandParameter[] {
+                CommandParameter.newEnum("record", new String[]{"record"})
+        });
     }
 
     /**
@@ -104,6 +167,9 @@ public class GameAdminCommand extends Command {
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" float add/remove [房间名称] [名称] [文本] 在脚下设置浮空字/删除浮空字");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" cancel 终止房间创建");
             commandSender.sendMessage("/"+TotalManager.COMMAND_ADMIN_NAME+" top add/remove [名称] [类型] [房间(可不填)] 创建/删除排行榜");
+            if (TotalManager.enableRecord) {
+                commandSender.sendMessage("/" + TotalManager.COMMAND_ADMIN_NAME + " record 管理录像");
+            }
             StringBuilder v = new StringBuilder("类型: ");
             for(PlayerData.DataType type: PlayerData.DataType.values()){
                 v.append(type.getName()).append(" , ");
@@ -357,6 +423,17 @@ public class GameAdminCommand extends Command {
                 TotalManager.sendMessageToObject("成功终止房间的创建，残留文件将在重启服务器后自动删除", commandSender);
                 // commandSender.sendMessage(TextFormat.colorize('&', "&d"));
 
+                break;
+            case "record":
+                if (TotalManager.enableRecord) {
+                    if (commandSender instanceof Player) {
+                        RecordPanel.disPlayerMenu((Player) commandSender);
+                    } else {
+                        commandSender.sendMessage("请不要在控制台执行");
+                    }
+                } else {
+                    commandSender.sendMessage("未启用录像功能");
+                }
                 break;
 
             default:break;
