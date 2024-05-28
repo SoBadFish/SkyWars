@@ -571,9 +571,10 @@ public class RoomManager implements Listener {
                         }
                         Item item = ((EntityHuman) entity).getInventory().getItemInHand();
                         if(item.hasCompoundTag() && "秒人斧".equalsIgnoreCase(item.getNamedTag().getString(NbtItemManager.TAG))) {
-                           if(playerInfo.player.distance(entity) < 2){
+                           if(playerInfo.player.distance(entity) <= 5){
                                //TODO 秒杀
                                playerInfo.death(new EntityDamageByEntityEvent(playerInfo.player,entity, EntityDamageEvent.DamageCause.ENTITY_ATTACK,0.5f));
+                               return;
                            }
                         }
                     }
