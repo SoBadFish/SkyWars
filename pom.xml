@@ -51,6 +51,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>de.theamychan</groupId>
             <artifactId>ScoreboardAPI</artifactId>
             <version>1.3-SNAPSHOT</version>
