@@ -6,61 +6,100 @@
 
     <groupId>org.sobadfish</groupId>
     <artifactId>SkyWars</artifactId>
-    <version>1.1.7</version>
+    <version>1.1.7-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>opencollab-repo-release</id>
+            <url>https://repo.opencollab.dev/maven-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>opencollab-repo-snapshot</id>
+            <url>https://repo.opencollab.dev/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>repo-lanink-cn</id>
+            <url>https://repo.lanink.cn/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>de.theamychan</groupId>
             <artifactId>ScoreboardAPI</artifactId>
             <version>1.3-SNAPSHOT</version>
-
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/[Tips前置(v1.2.7)]ScoreboardAPI-1.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath> ${project.basedir}/lib/Nukkit-PM1E-MOT-SNAPSHOT.jar</systemPath>
+            <version>MOT-java8-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.smallaswater.npc</groupId>
+            <groupId>com.smallaswater</groupId>
             <artifactId>RsNPC</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath> ${project.basedir}/lib/RsNPC-2.1.0-SNAPSHOT.jar</systemPath>
+            <version>2.4.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.smallaswater.autoupdata</groupId>
             <artifactId>AutoUpData</artifactId>
-            <version>1.2.3</version>
-            <scope>system</scope>
-            <systemPath> ${project.basedir}/lib/AutoUpData_v1.2.1.jar</systemPath>
+            <version>1.3.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sakura</groupId>
             <artifactId>Sakura</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath> ${project.basedir}/lib/Sakura-1.0.4-Release.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.smallaswater.npc</groupId>
-            <artifactId>RsNPCX</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath> ${project.basedir}/lib/RsNPCX-1.8.8-PNX.jar</systemPath>
+            <systemPath>${project.basedir}/lib/Sakura-1.0.4-Release.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.smallaswater.tips</groupId>
             <artifactId>Tips</artifactId>
-            <version>2.1.3-MOT-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath> ${project.basedir}/lib/Tips-2.1.3-MOT-SNAPSHOT.jar</systemPath>
+            <version>2.1.9</version>
+            <scope>provided</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>net.easecation</groupId>
+            <artifactId>Ghosty</artifactId>
+            <version>B20240115-MOT-C1-JAVA8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.lanink</groupId>
+            <artifactId>MemoriesOfTime-GameCore</artifactId>
+            <version>1.6.12</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
@@ -71,30 +110,11 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-
-                <configuration>
-                    <archive>
-                        <addMavenDescriptor>false</addMavenDescriptor>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib</classpathPrefix>
-                        </manifest>
-                        <manifestEntries>
-                            <Class-path>.lib/[Tips前置(v1.2.7)]ScoreboardAPI-1.3.jar</Class-path>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.10.1</version>
                 <configuration>
-
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
         </plugins>

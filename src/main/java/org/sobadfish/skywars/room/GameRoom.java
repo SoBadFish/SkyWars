@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 战桥房间信息
+ * 空岛房间信息
  * @author Sobadfish
  * @date 2022/9/9
  */
@@ -512,7 +512,7 @@ public class GameRoom {
             return;
         }
         //TODO 当房间启动后
-        if(getIPlayerInfos().size() == 0 && !isInit){
+        if(getIPlayerInfos().isEmpty() && !isInit){
             onDisable();
             return;
         }
@@ -584,6 +584,8 @@ public class GameRoom {
         type = GameType.END;
         worldInfo.setClose(true);
         loadTime = 5;
+
+        TotalManager.getRecordManager().stopRecord(this);
     }
 
     private void onStart() {
@@ -734,6 +736,7 @@ public class GameRoom {
                     teamAll = true;
                 }
 
+                TotalManager.getRecordManager().startRecord(this);
 
             }
         }else{
@@ -750,6 +753,9 @@ public class GameRoom {
         }
         close = true;
         type = GameType.CLOSE;
+
+        TotalManager.getRecordManager().stopRecord(this);
+
         if(hasStart) {
             roomConfig.save();
             GameCloseEvent event = new GameCloseEvent(this, TotalManager.getPlugin());
